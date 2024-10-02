@@ -1,4 +1,4 @@
-package com.example.passwordstest
+package com.example.passwordstest.presentation
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
