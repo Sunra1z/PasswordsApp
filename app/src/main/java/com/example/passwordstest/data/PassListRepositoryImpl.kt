@@ -5,23 +5,33 @@ import com.example.passwordstest.domain.PassListRepository
 
 object PassListRepositoryImpl: PassListRepository {
 
+    private val passList = mutableListOf<PassItem>()
+
+    private var autoIncrementId = 0
+
     override fun addPassItem(passItem: PassItem) {
-        TODO("Not yet implemented")
+        if (passItem.id == PassItem.UNDEFINED_ID) {
+            passItem.id = autoIncrementId++
+        }
+        passList.add(passItem)
     }
 
     override fun deletePassItem(passItem: PassItem) {
-        TODO("Not yet implemented")
+        passList.remove(passItem)
     }
 
-    override fun editPassItem() {
-        TODO("Not yet implemented")
+    override fun editPassItem(passItem: PassItem) {
+        val oldElement = getPassById(passItem.id)
+        passList.remove(oldElement)
+        addPassItem(passItem)
     }
 
     override fun getPassById(passId: Int): PassItem {
-        TODO("Not yet implemented")
+        // change NullException later
+        return passList.find { it.id == passId } ?: throw RuntimeException ("Element with id $passId not found")
     }
 
     override fun getPassList(): List<PassItem> {
-        TODO("Not yet implemented")
+        return passList.toList()
     }
 }

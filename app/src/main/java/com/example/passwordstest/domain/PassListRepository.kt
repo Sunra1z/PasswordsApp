@@ -5,7 +5,7 @@ interface PassListRepository {
 
     fun deletePassItem(passItem: PassItem)
 
-    fun editPassItem()
+    fun editPassItem(passItem: PassItem)
 
     fun getPassById(passId: Int): PassItem
 
