@@ -116,10 +116,7 @@ fun NotesScreen(
       floatingActionButton = {
          FloatingActionButton(
             onClick = {
-               scope.launch {
-                  selectedNoteId = null
-                  isSheetOpen = true
-               }
+               navController.navigate(Screen.AddEditNoteScreen.route)
             },
             containerColor = savoyBlue
          ) {

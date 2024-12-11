@@ -24,6 +24,7 @@ import com.example.passwordsapp.feature_pass.presentation.add_note.AddEditNoteVi
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import androidx.compose.ui.platform.LocalContext
+import kotlinx.coroutines.flow.collectLatest
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -45,7 +46,7 @@ fun NoteModalBottomSheet(
     }
 
     LaunchedEffect(key1 = true) {
-        viewModel.eventFlow.collect { event ->
+        viewModel.eventFlow.collectLatest { event ->
             when (event) {
                 is AddEditNoteViewModel.UiEvent.ShowSnackBar -> {
                     Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()

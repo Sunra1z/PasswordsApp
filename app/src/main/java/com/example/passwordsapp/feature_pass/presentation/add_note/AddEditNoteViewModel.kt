@@ -43,6 +43,7 @@ class AddEditNoteViewModel @Inject constructor(
 
     private var currentNoteId: Int? = null
 
+
     fun loadNoteById(noteId: Int) {
         viewModelScope.launch {
             noteUseCases.getNoteUseCase(noteId)?.also { note ->

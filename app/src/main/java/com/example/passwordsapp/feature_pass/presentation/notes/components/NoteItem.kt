@@ -65,7 +65,8 @@ fun NoteItem(
             } else {
                 false
             }
-        }
+        },
+        positionalThreshold = { it * .25f }
     )
 
     LaunchedEffect(key1 = isRemoved) {
