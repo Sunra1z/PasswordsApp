@@ -19,7 +19,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.passwordsapp.feature_pass.presentation.add_note.AddEditNoteScreen
 import com.example.passwordsapp.feature_pass.presentation.notes.NotesScreen
 import com.example.passwordsapp.feature_pass.presentation.util.Screen
 import com.example.passwordsapp.ui.theme.PasswordsAppTheme
@@ -44,22 +43,6 @@ class MainActivity : ComponentActivity() {
                         composable(
                             route = Screen.NotesScreen.route){
                             NotesScreen(navController = navController)
-                        }
-                        composable(
-                            route = Screen.AddEditNoteScreen.route +
-                                    "?noteId={noteId}",
-                            arguments = listOf(
-                                navArgument(
-                                    name = "noteId"
-                                ) {
-                                    type = NavType.IntType
-                                    defaultValue = -1
-                                }
-                            )
-                        ) {
-                            AddEditNoteScreen(
-                                navController = navController
-                            )
                         }
                     }
                 }

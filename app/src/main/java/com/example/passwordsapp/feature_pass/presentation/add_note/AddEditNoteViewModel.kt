@@ -20,7 +20,6 @@ import javax.inject.Inject
 @HiltViewModel
 class AddEditNoteViewModel @Inject constructor(
     private val noteUseCases: NoteUseCases,
-    savedStateHandle: SavedStateHandle,
     private val encryptionManager: EncryptionManager
 ) : ViewModel() {
 
@@ -44,34 +43,30 @@ class AddEditNoteViewModel @Inject constructor(
 
     private var currentNoteId: Int? = null
 
-    init {
-        savedStateHandle.get<Int>("noteId")?.let { noteId ->
-            if(noteId != -1){
-                viewModelScope.launch {
-                    noteUseCases.getNoteUseCase(noteId)?.also { note ->
-                        currentNoteId = note.id
-                        val decryptedUsername = encryptionManager.decrypt(
-                            note.username,
-                            note.usernameIv
-                        )
-                        val decryptedPassword = encryptionManager.decrypt(
-                            note.password,
-                            note.passwordIv
-                        )
-                        _noteTitle.value = noteTitle.value.copy(
-                            text = note.title,
-                            isHintVisible = false,
-                        )
-                        _usernameContent.value = usernameContent.value.copy(
-                            text = String(decryptedUsername),
-                            isHintVisible = false,
-                        )
-                        _passContent.value = passContent.value.copy(
-                            text = String(decryptedPassword),
-                            isHintVisible = false,
-                        )
-                    }
-                }
+    fun loadNoteById(noteId: Int) {
+        viewModelScope.launch {
+            noteUseCases.getNoteUseCase(noteId)?.also { note ->
+                currentNoteId = note.id
+                val decryptedUsername = encryptionManager.decrypt(
+                    note.username,
+                    note.usernameIv
+                )
+                val decryptedPassword = encryptionManager.decrypt(
+                    note.password,
+                    note.passwordIv
+                )
+                _noteTitle.value = noteTitle.value.copy(
+                    text = note.title,
+                    isHintVisible = false,
+                )
+                _usernameContent.value = usernameContent.value.copy(
+                    text = String(decryptedUsername),
+                    isHintVisible = false,
+                )
+                _passContent.value = passContent.value.copy(
+                    text = String(decryptedPassword),
+                    isHintVisible = false,
+                )
             }
         }
     }
@@ -114,6 +109,10 @@ class AddEditNoteViewModel @Inject constructor(
             is AddEditNoteEvent.SaveNote -> {
                 viewModelScope.launch {
                     try {
+                        if (usernameContent.value.text.isBlank() || passContent.value.text.isBlank()) {
+                            _eventFlow.emit(UiEvent.ShowSnackBar("Username and password cannot be empty"))
+                            return@launch
+                        }
                         val (encryptedUsername, usernameIv) = encryptionManager.encrypt(usernameContent.value.text.toByteArray())
                         val (encryptedPassword, passwordIv) = encryptionManager.encrypt(passContent.value.text.toByteArray())
                         noteUseCases.addNoteUseCase(

@@ -1,7 +1,12 @@
 package com.example.passwordsapp.feature_pass.presentation.notes.components
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -12,11 +17,24 @@ import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DismissDirection
+import androidx.compose.material3.DismissValue
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.SwipeToDismiss
+import androidx.compose.material3.SwipeToDismissBox
+import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
@@ -24,52 +42,94 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.passwordsapp.R
 import com.example.passwordsapp.feature_pass.domain.model.Note
+import kotlinx.coroutines.delay
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NoteItem(
     note: Note,
-    modifier: Modifier = Modifier,
-    onClick: () -> Unit
-){
-    Card(
-        modifier = Modifier
-            .padding(horizontal = 16.dp, vertical = 24.dp)
-            .fillMaxWidth()
-            .clickable { onClick() },
-        shape = RoundedCornerShape(CornerSize(10.dp)),
-        elevation = CardDefaults.cardElevation(6.dp)
-    ){
-        Row(){
-            Image(
-                painter = painterResource(id = R.drawable.baseline_account_box_24),
-                contentDescription = "image",
-                modifier = Modifier
-                    .padding(6.dp)
-                    .size(64.dp)
-                    .clip(RoundedCornerShape(CornerSize(6.dp)))
-                    .align(alignment = Alignment.CenterVertically)
-            )
-            Column(
-                modifier = Modifier
-                    .padding(1.dp)
-            ) {
-                Text(
-                    text = note.title,
-                    modifier = Modifier.padding(16.dp, 16.dp, 0.dp, 6.dp),
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Bold
-                )
-                Text(text = "••••••••", modifier = Modifier.padding(16.dp, 0.dp, 0.dp, 6.dp), fontSize = 12.sp)
+    onClick: () -> Unit,
+    onDelete: () -> Unit,
+    animationDuration: Int = 500,
+) {
+    var isRemoved by remember {
+        mutableStateOf(false)
+    }
+
+    val dismissState = rememberSwipeToDismissBoxState(
+        confirmValueChange = { value ->
+            if(value == SwipeToDismissBoxValue.EndToStart) {
+                isRemoved = true
+                true
+            } else {
+                false
             }
-            Spacer(modifier = Modifier.weight(1f))
-            Image(
-                painter = painterResource(id = R.drawable.baseline_arrow_forward_ios_24),
-                contentDescription = "detail",
-                modifier = Modifier
-                    .padding(end = 12.dp)
-                    .size(24.dp)
-                    .align(alignment = Alignment.CenterVertically)
+        }
+    )
+
+    LaunchedEffect(key1 = isRemoved) {
+        if(isRemoved){
+            delay(animationDuration.toLong())
+            onDelete()
+        }
+    }
+
+    AnimatedVisibility(
+        visible = !isRemoved,
+        exit = shrinkVertically(
+            animationSpec = tween(durationMillis = animationDuration),
+            shrinkTowards = Alignment.Top
+        ) + fadeOut()
+    ) {
+        Box {
+            SwipeToDismissBox(
+                state = dismissState,
+                enableDismissFromStartToEnd = false,
+                backgroundContent = { DeleteBackground(dismissState) },
+                content = {
+                    Card(
+                        modifier = Modifier
+                            .padding(horizontal = 8.dp, vertical = 8.dp)
+                            .fillMaxWidth()
+                            .clickable { onClick() },
+                        shape = RoundedCornerShape(CornerSize(10.dp)),
+                        elevation = CardDefaults.cardElevation(8.dp),
+                    ) {
+                        Row {
+                            Image(
+                                painter = painterResource(id = R.drawable.baseline_account_box_24),
+                                contentDescription = "image",
+                                modifier = Modifier
+                                    .padding(6.dp)
+                                    .size(64.dp)
+                                    .clip(RoundedCornerShape(CornerSize(6.dp)))
+                                    .align(alignment = Alignment.CenterVertically)
+                            )
+                            Column(
+                                modifier = Modifier
+                                    .padding(1.dp)
+                            ) {
+                                Text(
+                                    text = note.title,
+                                    modifier = Modifier.padding(16.dp, 16.dp, 0.dp, 6.dp),
+                                    fontSize = 16.sp,
+                                    fontWeight = FontWeight.Bold
+                                )
+                                Text(text = "••••••••", modifier = Modifier.padding(16.dp, 0.dp, 0.dp, 6.dp), fontSize = 12.sp)
+                            }
+                            Spacer(modifier = Modifier.weight(1f))
+                            Image(
+                                painter = painterResource(id = R.drawable.baseline_arrow_forward_ios_24),
+                                contentDescription = "detail",
+                                modifier = Modifier
+                                    .padding(end = 12.dp)
+                                    .size(24.dp)
+                                    .align(alignment = Alignment.CenterVertically)
+                            )
+                        }
+                    }
+                }
             )
         }
     }

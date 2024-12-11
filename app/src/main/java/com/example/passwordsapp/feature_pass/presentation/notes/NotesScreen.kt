@@ -15,65 +15,125 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.List
+import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SheetValue
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.example.passwordsapp.feature_pass.presentation.add_note.components.NoteModalBottomSheet
 import com.example.passwordsapp.feature_pass.presentation.notes.components.NoteItem
 import com.example.passwordsapp.feature_pass.presentation.notes.components.OrderSection
 import com.example.passwordsapp.feature_pass.presentation.util.Screen
+import com.example.passwordsapp.ui.theme.savoyBlue
+import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NotesScreen(
    viewModel: NotesViewModel = hiltViewModel(),
    navController: NavController
 ) {
    val state = viewModel.state.value
+   val snackbarHostState = remember { SnackbarHostState() }
+   val menuExpanded = remember { mutableStateOf(false) }
    val scope = rememberCoroutineScope()
+   val sheetState = rememberModalBottomSheetState()
+   var isSheetOpen by rememberSaveable { mutableStateOf(false) }
+   var selectedNoteId by rememberSaveable { mutableStateOf<Int?>(null) }
+   var showSnackbar by rememberSaveable { mutableStateOf(false) }
 
    Scaffold(
+      containerColor = Color.White,
+      topBar = {
+         TopAppBar(
+            colors = TopAppBarDefaults.topAppBarColors(
+               containerColor = Color(0x80FFFFFF), // Semi-transparent white
+               titleContentColor = MaterialTheme.colorScheme.primary,
+            ),
+            title = {
+               Text(
+                  "Passwords",
+                  maxLines = 1,
+                  overflow = TextOverflow.Ellipsis
+               )
+            },
+            actions = {
+               IconButton(onClick = { menuExpanded.value = true }) {
+                  Icon(
+                     imageVector = Icons.Filled.Menu,
+                     contentDescription = "Localized description"
+                  )
+               }
+               DropdownMenu(
+                  expanded = menuExpanded.value,
+                  onDismissRequest = { menuExpanded.value = false }
+               ) {
+                  DropdownMenuItem(
+                     text = { Text("Sort") },
+                     onClick = {
+                        viewModel.onEvent(NotesEvent.ToggleOrderSection)
+                        menuExpanded.value = false
+                     }
+                  )
+               }
+            },
+         )
+      },
       floatingActionButton = {
          FloatingActionButton(
             onClick = {
-               // add note
-               navController.navigate(Screen.AddEditNoteScreen.route)
+               scope.launch {
+                  selectedNoteId = null
+                  isSheetOpen = true
+               }
             },
-            containerColor = MaterialTheme.colorScheme.primary
+            containerColor = savoyBlue
          ) {
             Icon(imageVector = Icons.Default.Add, contentDescription = "Add note")
          }
-      }
+      },
+      snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
    ) { paddingValues ->
       Column(
          modifier = Modifier
             .fillMaxSize()
             .padding(paddingValues)
+            .padding(horizontal = 8.dp)
       ) {
-         Text(
-            text = "Passwords",
-            style = MaterialTheme.typography.headlineLarge
-         )
-         IconButton(
-            onClick = {
-               viewModel.onEvent(NotesEvent.ToggleOrderSection)
-            },
-         ) {
-            Icon(
-               imageVector = Icons.AutoMirrored.Default.List,
-               contentDescription = "Sort"
-            )
-         }
          AnimatedVisibility(
             visible = state.isOrderSectionVisible,
             enter = fadeIn() + slideInVertically(),
@@ -91,16 +151,45 @@ fun NotesScreen(
          }
          Spacer(modifier = Modifier.height(16.dp))
          LazyColumn(modifier = Modifier.fillMaxSize()) {
-            items(state.notes) { note ->
+            items(state.notes, key = { it.id!! }) { note ->
                NoteItem(
                   note = note,
                   onClick = {
-                     navController.navigate(Screen.AddEditNoteScreen.route + "?noteId=${note.id}")
+                     scope.launch {
+                        selectedNoteId = note.id
+                        isSheetOpen = true
+                     }
+                  },
+                  onDelete = {
+                     viewModel.onEvent(NotesEvent.DeleteNote(note))
+                     showSnackbar = true
                   }
                )
                Spacer(modifier = Modifier.height(16.dp))
             }
          }
       }
+   }
+   if (showSnackbar) {
+      LaunchedEffect(snackbarHostState) {
+         val result = snackbarHostState.showSnackbar(
+            message = "Note deleted",
+            actionLabel = "Undo",
+            duration = SnackbarDuration.Short
+         )
+         if (result == SnackbarResult.ActionPerformed) {
+            viewModel.onEvent(NotesEvent.RestoreNote)
+         }
+         showSnackbar = false
+      }
+   }
+   if (isSheetOpen) {
+      NoteModalBottomSheet(
+         sheetState = sheetState,
+         viewModel = hiltViewModel(),
+         scope = scope,
+         onDismissRequest = { isSheetOpen = false },
+         noteId = selectedNoteId
+      )
    }
 }
