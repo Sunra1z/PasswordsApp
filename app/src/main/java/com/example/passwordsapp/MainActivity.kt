@@ -6,15 +6,26 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -75,7 +86,12 @@ class MainActivity : AppCompatActivity() {
                                 Surface(
                                     color = MaterialTheme.colorScheme.background
                                 ) {
-                                    ContentHiddenScreen()
+                                    ContentHiddenScreen(onRetry = {
+                                        promptManager.showBiometricPrompt(
+                                            title = "Login to view your passwords",
+                                            description = "Without authentication content is prohibited"
+                                        )
+                                    })
                                 }
                             }
                         }
@@ -88,26 +104,39 @@ class MainActivity : AppCompatActivity() {
         }
 
         promptManager.showBiometricPrompt(
-            title = "Biometric login for my app",
-            description = "Log in using your biometric credential"
+            title = "Login to view your passwords",
+            description = "Without authentication content is prohibited"
         )
     }
 }
 
 @Composable
-fun ContentHiddenScreen() {
+fun ContentHiddenScreen(onRetry: () -> Unit) {
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-        Text(text = "Content is hidden")
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Image(
+                imageVector = Icons.Default.Lock,
+                contentDescription = "locked",
+                modifier = Modifier
+                    .size(64.dp)
+            )
+            Text(text = "Content is restricted")
+            Button(onClick = onRetry) {
+                Text(text = "Authenticate")
+            }
+        }
     }
 }
-
 @Preview(showBackground = true)
 @Composable
 fun ContentHiddenScreenPreview() {
     PasswordsAppTheme {
-        ContentHiddenScreen()
+        ContentHiddenScreen(onRetry = {})
     }
 }

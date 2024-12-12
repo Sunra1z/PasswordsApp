@@ -57,7 +57,8 @@ fun AddEditNoteScreen(
             },
             isHintVisible = viewModel.noteTitle.value.isHintVisible,
             singleLine = true,
-            textStyle = MaterialTheme.typography.headlineLarge
+            textStyle = MaterialTheme.typography.headlineLarge,
+            modifier = Modifier
         )
         Spacer(modifier = Modifier.height(16.dp))
         TransparentHintTextField(
@@ -71,7 +72,8 @@ fun AddEditNoteScreen(
             },
             isHintVisible = viewModel.usernameContent.value.isHintVisible,
             singleLine = true,
-            textStyle = MaterialTheme.typography.bodyLarge
+            textStyle = MaterialTheme.typography.bodyLarge,
+            modifier = Modifier
         )
         Spacer(modifier = Modifier.height(16.dp))
         TransparentHintTextField(
@@ -85,7 +87,8 @@ fun AddEditNoteScreen(
             },
             isHintVisible = viewModel.passContent.value.isHintVisible,
             singleLine = true,
-            textStyle = MaterialTheme.typography.bodyLarge
+            textStyle = MaterialTheme.typography.bodyLarge,
+            modifier = Modifier
         )
         Spacer(modifier = Modifier.height(16.dp))
         Button(

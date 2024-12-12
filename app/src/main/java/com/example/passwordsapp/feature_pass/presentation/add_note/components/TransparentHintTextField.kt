@@ -23,6 +23,7 @@ fun TransparentHintTextField(
     onFocusChange: (FocusState) -> Unit,
     isHintVisible: Boolean,
     singleLine: Boolean,
+    modifier: Modifier,
     textStyle: TextStyle,
     visualTransformation: VisualTransformation = VisualTransformation.None,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default
