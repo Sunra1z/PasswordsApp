@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -24,6 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.lifecycleScope
@@ -97,7 +99,35 @@ class MainActivity : AppCompatActivity() {
                         }
                     }
                     else -> {
-                        // Handle other cases
+                        setContent {
+                            PasswordsAppTheme {
+                                Surface(
+                                    color = MaterialTheme.colorScheme.background
+                                ) {
+                                    Box(
+                                        modifier = Modifier.fillMaxSize(),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Column(
+                                            horizontalAlignment = Alignment.CenterHorizontally,
+                                            verticalArrangement = Arrangement.Center
+                                        ) {
+                                            Image(
+                                                imageVector = Icons.Default.Warning,
+                                                contentDescription = "locked",
+                                                modifier = Modifier
+                                                    .size(64.dp)
+                                            )
+                                            Text(
+                                                text = "It seems like your device has no security measures" +
+                                                        "\nTo use this app set PIN/Fingerprint/Face Unlock",
+                                                textAlign = TextAlign.Center
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }

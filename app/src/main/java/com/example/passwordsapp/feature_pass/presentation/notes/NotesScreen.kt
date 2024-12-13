@@ -171,12 +171,12 @@ fun NotesScreen(
       LaunchedEffect(snackbarHostState) {
          val result = snackbarHostState.showSnackbar(
             message = "Note deleted",
-            actionLabel = "Undo",
+//            actionLabel = "Undo",
             duration = SnackbarDuration.Short
          )
-         if (result == SnackbarResult.ActionPerformed) {
-            viewModel.onEvent(NotesEvent.RestoreNote)
-         }
+//         if (result == SnackbarResult.ActionPerformed) {
+//            viewModel.onEvent(NotesEvent.RestoreNote)
+//         }
          showSnackbar = false
       }
    }
