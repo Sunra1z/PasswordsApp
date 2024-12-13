@@ -58,6 +58,7 @@ import com.example.passwordsapp.feature_pass.presentation.add_note.components.No
 import com.example.passwordsapp.feature_pass.presentation.notes.components.NoteItem
 import com.example.passwordsapp.feature_pass.presentation.notes.components.OrderSection
 import com.example.passwordsapp.feature_pass.presentation.util.Screen
+import com.example.passwordsapp.ui.theme.grayishCard
 import com.example.passwordsapp.ui.theme.savoyBlue
 import kotlinx.coroutines.launch
 
@@ -120,7 +121,10 @@ fun NotesScreen(
             },
             containerColor = savoyBlue
          ) {
-            Icon(imageVector = Icons.Default.Add, contentDescription = "Add note")
+            Icon(imageVector = Icons.Default.Add,
+               contentDescription = "Add note",
+               tint = Color.White
+            )
          }
       },
       snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
@@ -151,6 +155,7 @@ fun NotesScreen(
             items(state.notes, key = { it.id!! }) { note ->
                NoteItem(
                   note = note,
+                  backgroundColor = grayishCard,
                   onClick = {
                      scope.launch {
                         selectedNoteId = note.id

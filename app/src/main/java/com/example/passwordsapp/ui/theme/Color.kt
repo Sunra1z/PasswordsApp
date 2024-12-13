@@ -12,3 +12,4 @@ val Pink40 = Color(0xFF7D5260)
 
 val savoyBlue = Color(90, 105, 175)
 val tropicalIndigo = Color(168, 156, 245, 255)
+val grayishCard = Color(0xFFECECEC)

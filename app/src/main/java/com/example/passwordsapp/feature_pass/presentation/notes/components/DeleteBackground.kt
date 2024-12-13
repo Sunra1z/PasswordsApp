@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.DismissDirection
@@ -24,25 +25,20 @@ import androidx.compose.ui.unit.dp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DeleteBackground(
-    dismissState: SwipeToDismissBoxState
-){
-    val color = if(dismissState.dismissDirection == SwipeToDismissBoxValue.EndToStart){
-        Color.Red
-    } else Color.Transparent
-
+fun DeleteBackground(dismissState: SwipeToDismissBoxState) {
+    val backgroundColor = Color.Red
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(color)
-            .padding(horizontal = 8.dp, vertical = 8.dp),
+            .padding(horizontal = 8.dp, vertical = 8.dp)
+            .background(backgroundColor, shape = RoundedCornerShape(10.dp)),
         contentAlignment = Alignment.CenterEnd
     ) {
         Icon(
             imageVector = Icons.Default.Delete,
-            contentDescription = null,
-            tint = Color.White
+            contentDescription = "Delete",
+            tint = Color.White,
+            modifier = Modifier.padding(end = 16.dp)
         )
     }
-
 }

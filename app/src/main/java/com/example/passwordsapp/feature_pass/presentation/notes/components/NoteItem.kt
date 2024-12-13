@@ -20,6 +20,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DismissDirection
 import androidx.compose.material3.DismissValue
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SwipeToDismiss
 import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.SwipeToDismissBoxValue
@@ -52,6 +53,7 @@ fun NoteItem(
     onClick: () -> Unit,
     onDelete: () -> Unit,
     animationDuration: Int = 500,
+    backgroundColor: Color = MaterialTheme.colorScheme.surface
 ) {
     var isRemoved by remember {
         mutableStateOf(false)
@@ -96,17 +98,10 @@ fun NoteItem(
                             .clickable { onClick() },
                         shape = RoundedCornerShape(CornerSize(10.dp)),
                         elevation = CardDefaults.cardElevation(8.dp),
+                        colors = CardDefaults.cardColors(containerColor = backgroundColor)
                     ) {
                         Row {
-                            Image(
-                                painter = painterResource(id = R.drawable.baseline_account_box_24),
-                                contentDescription = "image",
-                                modifier = Modifier
-                                    .padding(6.dp)
-                                    .size(64.dp)
-                                    .clip(RoundedCornerShape(CornerSize(6.dp)))
-                                    .align(alignment = Alignment.CenterVertically)
-                            )
+                            NoteIcon(noteTitle = note.title)
                             Column(
                                 modifier = Modifier
                                     .padding(1.dp)
