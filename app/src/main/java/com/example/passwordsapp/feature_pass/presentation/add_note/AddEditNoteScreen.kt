@@ -1,19 +1,33 @@
 package com.example.passwordsapp.feature_pass.presentation.add_note
 
 import android.widget.Toast
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Error
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -26,6 +40,8 @@ fun AddEditNoteScreen(
     viewModel: AddEditNoteViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
+    var isError by remember { mutableStateOf(false) }
+    var username by remember { mutableStateOf("") }
 
     LaunchedEffect(key1 = true) {
         viewModel.eventFlow.collectLatest { event ->
@@ -43,61 +59,92 @@ fun AddEditNoteScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
+            .padding(16.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Spacer(modifier = Modifier.height(16.dp))
-        TransparentHintTextField(
-            text = viewModel.noteTitle.value.text,
-            hint = viewModel.noteTitle.value.hint,
+        Text(
+            text = "Add Password",
+            style = MaterialTheme.typography.headlineLarge,
+            modifier = Modifier.padding(16.dp)
+        )
+
+        OutlinedTextField(
+            value = viewModel.noteTitle.value.text,
             onValueChange = {
                 viewModel.onEvent(AddEditNoteEvent.EnteredTitle(it))
+                isError = it.isEmpty()
             },
-            onFocusChange = {
-                viewModel.onEvent(AddEditNoteEvent.ChangeTitleFocus(it))
-            },
-            isHintVisible = viewModel.noteTitle.value.isHintVisible,
-            singleLine = true,
-            textStyle = MaterialTheme.typography.headlineLarge,
+            label = { Text("Title") },
+            shape = RoundedCornerShape(50),
             modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp),
+            isError = isError && viewModel.noteTitle.value.text.isEmpty()
         )
-        Spacer(modifier = Modifier.height(16.dp))
-        TransparentHintTextField(
-            text = viewModel.usernameContent.value.text,
-            hint = viewModel.usernameContent.value.hint,
+
+        OutlinedTextField(
+            value = viewModel.usernameContent.value.text,
             onValueChange = {
                 viewModel.onEvent(AddEditNoteEvent.EnteredUsername(it))
+                isError = it.isEmpty()
             },
-            onFocusChange = {
-                viewModel.onEvent(AddEditNoteEvent.ChangeUsernameFocus(it))
-            },
-            isHintVisible = viewModel.usernameContent.value.isHintVisible,
-            singleLine = true,
-            textStyle = MaterialTheme.typography.bodyLarge,
+            label = { Text("Username") },
+            shape = RoundedCornerShape(50),
             modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp),
+            isError = isError && viewModel.usernameContent.value.text.isEmpty()
         )
-        Spacer(modifier = Modifier.height(16.dp))
-        TransparentHintTextField(
-            text = viewModel.passContent.value.text,
-            hint = viewModel.passContent.value.hint,
+
+        OutlinedTextField(
+            value = viewModel.passContent.value.text,
             onValueChange = {
                 viewModel.onEvent(AddEditNoteEvent.EnteredPassword(it))
+                isError = it.isEmpty()
             },
-            onFocusChange = {
-                viewModel.onEvent(AddEditNoteEvent.ChangePasswordFocus(it))
-            },
-            isHintVisible = viewModel.passContent.value.isHintVisible,
-            singleLine = true,
-            textStyle = MaterialTheme.typography.bodyLarge,
+            label = { Text("Password") },
+            shape = RoundedCornerShape(50),
             modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp),
+            visualTransformation = PasswordVisualTransformation(),
+            isError = isError && viewModel.passContent.value.text.isEmpty(),
+            trailingIcon = {
+                if (isError && viewModel.passContent.value.text.isEmpty()) {
+                    Icon(Icons.Default.Error, contentDescription = "Error")
+                }
+            }
         )
-        Spacer(modifier = Modifier.height(16.dp))
-        Button(
-            onClick = {
-                viewModel.onEvent(AddEditNoteEvent.SaveNote)
-            },
-            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
+
+        if (isError && viewModel.passContent.value.text.isEmpty()) {
+            Text(
+                text = "Password must not be empty.",
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.padding(bottom = 8.dp)
+            )
+        }
+
+        Row(
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Save Note")
+            Button(onClick = {
+                if (viewModel.noteTitle.value.text.isEmpty()
+                    || viewModel.passContent.value.text.isEmpty()
+                    || viewModel.usernameContent.value.text.isEmpty()) {
+                    isError = true
+                } else {
+                    viewModel.onEvent(AddEditNoteEvent.SaveNote)
+                }
+            }) {
+                Text("Save")
+            }
+
+            Button(onClick = { navController.navigateUp() }) {
+                Text("Cancel")
+            }
         }
     }
 }
