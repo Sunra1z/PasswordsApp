@@ -57,6 +57,7 @@ import androidx.navigation.NavController
 import com.example.passwordsapp.feature_pass.presentation.add_note.components.NoteModalBottomSheet
 import com.example.passwordsapp.feature_pass.presentation.notes.components.NoteItem
 import com.example.passwordsapp.feature_pass.presentation.notes.components.OrderSection
+import com.example.passwordsapp.feature_pass.presentation.notes.components.ShimmerEffect
 import com.example.passwordsapp.feature_pass.presentation.util.Screen
 import com.example.passwordsapp.ui.theme.grayishCard
 import com.example.passwordsapp.ui.theme.savoyBlue
@@ -151,23 +152,31 @@ fun NotesScreen(
             )
          }
          Spacer(modifier = Modifier.height(16.dp))
-         LazyColumn(modifier = Modifier.fillMaxSize()) {
-            items(state.notes, key = { it.id!! }) { note ->
-               NoteItem(
-                  note = note,
-                  backgroundColor = grayishCard,
-                  onClick = {
-                     scope.launch {
-                        selectedNoteId = note.id
-                        isSheetOpen = true
+         if (state.isLoading){
+            LazyColumn(modifier = Modifier.fillMaxSize()){
+               items(5){
+                  ShimmerEffect()
+               }
+            }
+         } else {
+            LazyColumn(modifier = Modifier.fillMaxSize()) {
+               items(state.notes, key = { it.id!! }) { note ->
+                  NoteItem(
+                     note = note,
+                     backgroundColor = grayishCard,
+                     onClick = {
+                        scope.launch {
+                           selectedNoteId = note.id
+                           isSheetOpen = true
+                        }
+                     },
+                     onDelete = {
+                        viewModel.onEvent(NotesEvent.DeleteNote(note))
+                        showSnackbar = true
                      }
-                  },
-                  onDelete = {
-                     viewModel.onEvent(NotesEvent.DeleteNote(note))
-                     showSnackbar = true
-                  }
-               )
-               Spacer(modifier = Modifier.height(16.dp))
+                  )
+                  Spacer(modifier = Modifier.height(16.dp))
+               }
             }
          }
       }

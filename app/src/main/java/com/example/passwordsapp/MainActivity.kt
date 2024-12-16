@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Lock
@@ -18,9 +19,11 @@ import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -32,7 +35,10 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.passwordsapp.feature_pass.presentation.PasswordCheck.PasswordCheckScreen
+import com.example.passwordsapp.feature_pass.presentation.SettingsScreen
 import com.example.passwordsapp.feature_pass.presentation.add_note.AddEditNoteScreen
+import com.example.passwordsapp.feature_pass.presentation.add_note.components.BottomNavigationBar
 import com.example.passwordsapp.feature_pass.presentation.notes.NotesScreen
 import com.example.passwordsapp.feature_pass.presentation.util.BiometricPromptManager
 import com.example.passwordsapp.feature_pass.presentation.util.Screen
@@ -58,25 +64,7 @@ class MainActivity : AppCompatActivity() {
                         // Authentication succeeded, proceed to the main content
                         setContent {
                             PasswordsAppTheme {
-                                Surface(
-                                    color = MaterialTheme.colorScheme.background
-                                ) {
-                                    val navController = rememberNavController()
-                                    NavHost(
-                                        navController = navController,
-                                        startDestination = Screen.NotesScreen.route
-                                    ) {
-                                        composable(
-                                            route = Screen.NotesScreen.route) {
-                                            NotesScreen(navController = navController)
-                                        }
-                                        composable(route = Screen.AddEditNoteScreen.route) {
-                                            AddEditNoteScreen(
-                                                navController = navController
-                                            )
-                                        }
-                                    }
-                                }
+                                MainScreen()
                             }
                         }
                     }
@@ -168,5 +156,28 @@ fun ContentHiddenScreen(onRetry: () -> Unit) {
 fun ContentHiddenScreenPreview() {
     PasswordsAppTheme {
         ContentHiddenScreen(onRetry = {})
+    }
+}
+
+@Composable
+fun MainScreen() {
+    val navController = rememberNavController()
+    val coroutineScope = rememberCoroutineScope()
+
+    Scaffold(
+        bottomBar = {
+            BottomNavigationBar(navController)
+        }
+    ) { innerPadding ->
+        NavHost(
+            navController = navController,
+            startDestination = Screen.NotesScreen.route,
+            modifier = Modifier.padding(innerPadding)
+        ) {
+            composable(Screen.NotesScreen.route) { NotesScreen(navController = navController) }
+            composable(Screen.PasswordCheckScreen.route) { PasswordCheckScreen() }
+            composable(Screen.SettingsScreen.route) { SettingsScreen() }
+            composable(Screen.AddEditNoteScreen.route){ AddEditNoteScreen(navController) }
+        }
     }
 }

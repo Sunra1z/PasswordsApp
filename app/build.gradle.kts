@@ -70,15 +70,29 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
+
+    // DI Hilt
     implementation("com.google.dagger:hilt-android:2.51.1")
     kapt("com.google.dagger:hilt-compiler:2.51.1")
     implementation("androidx.hilt:hilt-navigation-compose:1.1.0-alpha01")
 
+    // Room DB
     implementation("androidx.room:room-runtime:2.6.1")
     kapt("androidx.room:room-compiler:2.6.1")
     implementation("androidx.room:room-ktx:2.6.1")
 
+    // Biometric auth
     implementation("androidx.biometric:biometric:1.1.0")
 
+    // Material Icons
     implementation("androidx.compose.material:material-icons-extended:1.7.5")
+
+    // Loading LazyColumn animation
+    implementation("com.valentinilk.shimmer:compose-shimmer:1.0.3")
+
+    // Navigation and Compose
+    implementation("androidx.navigation:navigation-compose:2.8.5")
+    implementation("androidx.compose.material3:material3:1.0.1")
+    implementation("androidx.compose.material:material:1.7.6")
+    implementation("com.google.accompanist:accompanist-navigation-animation:0.28.0")
 }

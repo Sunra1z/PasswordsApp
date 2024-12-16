@@ -64,17 +64,21 @@ class NotesViewModel @Inject constructor(
         }
     }
 
-    private fun getNotes(noteOrder: NoteOrder){
+    private fun getNotes(noteOrder: NoteOrder) {
         getNotesJob?.cancel()
-        noteUseCases.getNotesUseCase(noteOrder)
-            .onEach { notes ->
-                _state.value = state.value.copy(
-                    notes = notes,
-                    noteOrder = noteOrder
-                )
-            }
-            .launchIn(viewModelScope)
+        viewModelScope.launch {
+            _state.value = state.value.copy(isLoading = true)
+            kotlinx.coroutines.delay(2000) // Add a delay of 2 seconds
+            noteUseCases.getNotesUseCase(noteOrder)
+                .onEach { notes ->
+                    _state.value = state.value.copy(
+                        notes = notes,
+                        noteOrder = noteOrder,
+                        isLoading = false
+                    )
+                }
+                .launchIn(this)
+        }
     }
-
 
 }
