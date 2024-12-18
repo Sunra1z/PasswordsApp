@@ -13,10 +13,6 @@ data class Note(
     val usernameIv: ByteArray,
     val passwordIv: ByteArray,
     @PrimaryKey val id: Int? = null
-) {
-    companion object {
-        val categories = listOf("Social", "Gaming", "Email", "Work", "Finance", "Other")
-    }
-}
+)
 
 class InvalidNoteException(message: String): Exception(message)

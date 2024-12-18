@@ -95,4 +95,7 @@ dependencies {
     implementation("androidx.compose.material3:material3:1.0.1")
     implementation("androidx.compose.material:material:1.7.6")
     implementation("com.google.accompanist:accompanist-navigation-animation:0.28.0")
+
+    //password check
+    implementation("com.nulab-inc:zxcvbn:1.3.3")
 }
