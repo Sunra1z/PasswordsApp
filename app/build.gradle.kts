@@ -98,4 +98,7 @@ dependencies {
 
     //password check
     implementation("com.nulab-inc:zxcvbn:1.3.3")
+    // okhttp
+    implementation("com.squareup.okhttp3:okhttp:3.2.0")
+    implementation("com.squareup.okio:okio:3.0.0")
 }
