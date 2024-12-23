@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -29,7 +30,8 @@ import com.example.passwordsapp.feature_pass.presentation.notes.components.NoteI
 @Composable
 fun PasswordWarningItem(
     warning: PasswordWarning,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onOpenNote: (Int?) -> Unit
 ) {
     if (warning.score < 4) {
         Card(
@@ -69,6 +71,11 @@ fun PasswordWarningItem(
                             color = Color.Red
                         )
                     }
+                    Button(onClick = {
+                        onOpenNote(warning.noteId)
+                    }) {
+                        Text("Change Password")
+                    }
                     if (warning.suggestions.isNotEmpty()) {
                         Spacer(modifier = Modifier.height(2.dp)) // Reduced spacing
                         warning.suggestions.forEach { suggestion ->
@@ -97,7 +104,7 @@ fun PasswordWarningItemPreview() {
         suggestions = listOf(
             "Use at least one special character.",
             "Make your password longer."
-        )
+        ),
+        noteId = 1
     )
-    PasswordWarningItem(warning = sampleWarning)
 }

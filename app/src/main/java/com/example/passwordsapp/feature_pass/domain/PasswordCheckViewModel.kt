@@ -31,13 +31,18 @@ class PasswordCheckViewModel @Inject constructor (
     private val _passwordWarnings = MutableStateFlow<List<PasswordWarning>>(emptyList())
     val passwordWarnings: StateFlow<List<PasswordWarning>> = _passwordWarnings
 
+    private val _isLoading = MutableStateFlow(false)
+    val isLoading: StateFlow<Boolean> = _isLoading
+
     fun loadNotes() {
         viewModelScope.launch {
+            _isLoading.value = true // Set loading state to true
             noteUseCases.getNotesUseCase()
                 .flowOn(Dispatchers.IO) // Ensure Flow operates on IO dispatcher
                 .collect { notes ->
                     val analyzedWarnings = analyzeNotePasswords(notes) // Process the list of notes
                     _passwordWarnings.value = analyzedWarnings
+                    _isLoading.value = false // Set loading state to false after processing
                 }
         }
     }
@@ -59,7 +64,8 @@ class PasswordCheckViewModel @Inject constructor (
                         password = passwordString,
                         score = analysisResult.score,
                         warning = analysisResult.feedback.warning.orEmpty(),
-                        suggestions = analysisResult.feedback.suggestions
+                        suggestions = analysisResult.feedback.suggestions,
+                        noteId = note.id
                     )
                 }
             } catch (e: Exception) {

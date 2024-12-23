@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
@@ -39,6 +41,7 @@ fun PasswordWarningDropdown(
     title: String,
     warnings: List<PasswordWarning>,
     color: Color,
+    onOpenNote: (Int?) -> Unit,
     modifier: Modifier = Modifier
 ) {
     var expanded by remember { mutableStateOf(false) }
@@ -71,7 +74,7 @@ fun PasswordWarningDropdown(
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        text = "${warnings.size} password(s) compromised"
+                        text = "${warnings.size} weak password(s)"
                     )
                 }
                 Icon(
@@ -81,29 +84,31 @@ fun PasswordWarningDropdown(
                 )
             }
             if (expanded) {
-                warnings.forEach { warning ->
-                    PasswordWarningItem(warning = warning)
+                LazyColumn {
+                    items(warnings) { warning ->
+                        PasswordWarningItem(warning = warning, onOpenNote = onOpenNote)
+                    }
                 }
             }
         }
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun PasswordWarningDropdownPreview() {
-    val sampleWarnings = listOf(
-        PasswordWarning(title = "Example Note",
-            username = "example_user",
-            password = "weakpassword123",
-            score = 1,
-            warning = "Your password is too weak.",
-            suggestions = listOf("suggestion")),
-    )
-
-    PasswordWarningDropdown(
-        title = "Critical Warnings",
-        warnings = sampleWarnings,
-        color = Color(0xFFB00020)
-    )
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun PasswordWarningDropdownPreview() {
+//    val sampleWarnings = listOf(
+//        PasswordWarning(title = "Example Note",
+//            username = "example_user",
+//            password = "weakpassword123",
+//            score = 1,
+//            warning = "Your password is too weak.",
+//            suggestions = listOf("suggestion")),
+//    )
+//
+//    PasswordWarningDropdown(
+//        title = "Critical Warnings",
+//        warnings = sampleWarnings,
+//        color = Color(0xFFB00020)
+//    )
+//}

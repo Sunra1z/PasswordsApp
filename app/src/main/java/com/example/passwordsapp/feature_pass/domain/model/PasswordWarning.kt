@@ -6,5 +6,6 @@ data class PasswordWarning(
     val password: String,
     val score: Int,
     val warning: String,
-    val suggestions: List<String>
+    val suggestions: List<String>,
+    val noteId: Int?
 )
