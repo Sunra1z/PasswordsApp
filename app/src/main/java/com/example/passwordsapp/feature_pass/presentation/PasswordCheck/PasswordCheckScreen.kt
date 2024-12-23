@@ -57,14 +57,15 @@ fun PasswordCheckScreen(
                 if (isLoading) {
                     CircularProgressIndicator()
                 } else {
+                    val filteredWarnings = passwordWarnings.filter { it.warning.isNotEmpty() }
                     PasswordWarningDropdown(
                         title = "Password Warnings",
-                        warnings = passwordWarnings,
+                        warnings = filteredWarnings,
                         color = Color.Red,
                         onOpenNote = { noteId ->
                             selectedNoteId = noteId
                             isSheetOpen = true
-                        }
+                        },
                     )
                 }
             }
