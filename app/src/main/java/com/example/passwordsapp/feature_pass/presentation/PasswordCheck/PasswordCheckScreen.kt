@@ -55,7 +55,7 @@ fun PasswordCheckScreen(
                     .padding(padding)
             ) {
                 if (isLoading) {
-                    CircularProgressIndicator()
+                    CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
                 } else {
                     val filteredWarnings = passwordWarnings.filter { it.warning.isNotEmpty() }
                     PasswordWarningDropdown(

@@ -1,6 +1,8 @@
 package com.example.passwordsapp.feature_pass.presentation.PasswordCheck
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -11,21 +13,33 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material.icons.rounded.Album
+import androidx.compose.material.icons.rounded.Error
+import androidx.compose.material.icons.twotone.AddAlert
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.passwordsapp.R
 import com.example.passwordsapp.feature_pass.domain.model.PasswordWarning
 import com.example.passwordsapp.feature_pass.presentation.notes.components.NoteIcon
+import com.example.passwordsapp.ui.theme.greenAlertColor
+import com.example.passwordsapp.ui.theme.moderatePassColor
+import com.example.passwordsapp.ui.theme.redAlertColor
+import com.example.passwordsapp.ui.theme.strongPassColor
+import com.example.passwordsapp.ui.theme.weakPassColor
+import com.example.passwordsapp.ui.theme.yellowAlertColor
 
 @Composable
 fun PasswordWarningItem(
@@ -37,26 +51,33 @@ fun PasswordWarningItem(
         Card(
             modifier = modifier
                 .fillMaxWidth()
-                .padding(8.dp), // Reduced padding
+                .padding(8.dp)
+                .clickable { onOpenNote(warning.noteId) }, // edit note with warning
             colors = CardDefaults.cardColors(
                 containerColor = when (warning.score) {
-                    0, 1 -> Color.Red.copy(alpha = 0.1f) // Weak password
-                    2, 3 -> Color.Yellow.copy(alpha = 0.1f) // Moderate password
-                    else -> Color.Green.copy(alpha = 0.1f) // Strong password
+                    0, 1 -> weakPassColor // Weak password
+                    2, 3 -> moderatePassColor // Moderate password
+                    else -> strongPassColor // Strong password
                 }
             )
         ) {
             Row {
                 Icon(
-                    imageVector = Icons.Default.Warning,
+                    imageVector = Icons.Rounded.Error,
                     contentDescription = "warning",
+                    tint = when (warning.score){
+                        0, 1 -> redAlertColor
+                        2, 3 -> yellowAlertColor
+                        else -> greenAlertColor
+                    },
                     modifier = modifier
-                        .padding(4.dp) // Reduced padding
+                        .padding(16.dp) // Reduced padding
                         .size(48.dp) // Reduced size
                         .align(Alignment.CenterVertically)
                 )
                 Column(
                     modifier = Modifier
+                        .weight(1f)
                         .padding(4.dp) // Reduced padding
                 ) {
                     Text(
@@ -71,11 +92,6 @@ fun PasswordWarningItem(
                             color = Color.Red
                         )
                     }
-                    Button(onClick = {
-                        onOpenNote(warning.noteId)
-                    }) {
-                        Text("Change Password")
-                    }
                     if (warning.suggestions.isNotEmpty()) {
                         Spacer(modifier = Modifier.height(2.dp)) // Reduced spacing
                         warning.suggestions.forEach { suggestion ->
@@ -87,6 +103,15 @@ fun PasswordWarningItem(
                         }
                     }
                 }
+                Image(
+                    painter = painterResource(id = R.drawable.baseline_arrow_forward_ios_24),
+                    contentDescription = "detail",
+                    modifier = Modifier
+                        .padding(end = 12.dp)
+                        .size(24.dp)
+                        .align(Alignment.CenterVertically)
+                )
+
             }
         }
     }
@@ -106,5 +131,9 @@ fun PasswordWarningItemPreview() {
             "Make your password longer."
         ),
         noteId = 1
+    )
+    PasswordWarningItem(
+        warning = sampleWarning,
+        onOpenNote = { }
     )
 }
