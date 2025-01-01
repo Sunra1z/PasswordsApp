@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material.icons.rounded.Album
 import androidx.compose.material.icons.rounded.Error
@@ -34,6 +35,8 @@ import androidx.compose.ui.unit.dp
 import com.example.passwordsapp.R
 import com.example.passwordsapp.feature_pass.domain.model.PasswordWarning
 import com.example.passwordsapp.feature_pass.presentation.notes.components.NoteIcon
+import com.example.passwordsapp.ui.theme.grayCard
+import com.example.passwordsapp.ui.theme.grayishCard
 import com.example.passwordsapp.ui.theme.greenAlertColor
 import com.example.passwordsapp.ui.theme.moderatePassColor
 import com.example.passwordsapp.ui.theme.redAlertColor
@@ -54,12 +57,9 @@ fun PasswordWarningItem(
                 .padding(8.dp)
                 .clickable { onOpenNote(warning.noteId) }, // edit note with warning
             colors = CardDefaults.cardColors(
-                containerColor = when (warning.score) {
-                    0, 1 -> weakPassColor // Weak password
-                    2, 3 -> moderatePassColor // Moderate password
-                    else -> strongPassColor // Strong password
-                }
-            )
+                containerColor = MaterialTheme.colorScheme.surface
+            ),
+            elevation = CardDefaults.cardElevation(8.dp)
         ) {
             Row {
                 Icon(
@@ -82,6 +82,7 @@ fun PasswordWarningItem(
                 ) {
                     Text(
                         text = warning.title,
+                        color = MaterialTheme.colorScheme.onBackground,
                         style = MaterialTheme.typography.bodyMedium,
                         fontWeight = FontWeight.Bold
                     )
@@ -89,7 +90,7 @@ fun PasswordWarningItem(
                         Text(
                             text = "Warning: ${warning.warning}",
                             style = MaterialTheme.typography.bodySmall,
-                            color = Color.Red
+                            color = MaterialTheme.colorScheme.error
                         )
                     }
                     if (warning.suggestions.isNotEmpty()) {
@@ -98,18 +99,20 @@ fun PasswordWarningItem(
                             Text(
                                 text = "- $suggestion",
                                 style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onBackground,
                                 modifier = Modifier.padding(start = 4.dp) // Reduced padding
                             )
                         }
                     }
                 }
-                Image(
-                    painter = painterResource(id = R.drawable.baseline_arrow_forward_ios_24),
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowForwardIos,
                     contentDescription = "detail",
+                    tint = MaterialTheme.colorScheme.onBackground,
                     modifier = Modifier
                         .padding(end = 12.dp)
                         .size(24.dp)
-                        .align(Alignment.CenterVertically)
+                        .align(alignment = Alignment.CenterVertically)
                 )
 
             }

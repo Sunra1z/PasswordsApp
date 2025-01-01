@@ -18,7 +18,9 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -73,6 +75,9 @@ fun AddEditNoteScreen(
 
         OutlinedTextField(
             value = viewModel.noteTitle.value.text,
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedTextColor = MaterialTheme.colorScheme.onBackground,
+                unfocusedTextColor = MaterialTheme.colorScheme.onBackground),
             onValueChange = {
                 viewModel.onEvent(AddEditNoteEvent.EnteredTitle(it))
                 isError = it.isEmpty()
@@ -87,6 +92,9 @@ fun AddEditNoteScreen(
 
         OutlinedTextField(
             value = viewModel.usernameContent.value.text,
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedTextColor = MaterialTheme.colorScheme.onBackground,
+                unfocusedTextColor = MaterialTheme.colorScheme.onBackground),
             onValueChange = {
                 viewModel.onEvent(AddEditNoteEvent.EnteredUsername(it))
                 isError = it.isEmpty()
@@ -101,6 +109,9 @@ fun AddEditNoteScreen(
 
         OutlinedTextField(
             value = viewModel.passContent.value.text,
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedTextColor = MaterialTheme.colorScheme.onBackground,
+                unfocusedTextColor = MaterialTheme.colorScheme.onBackground),
             onValueChange = {
                 viewModel.onEvent(AddEditNoteEvent.EnteredPassword(it))
                 isError = it.isEmpty()

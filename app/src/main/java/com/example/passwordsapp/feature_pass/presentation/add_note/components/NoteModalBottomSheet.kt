@@ -89,7 +89,8 @@ fun NoteModalBottomSheet(
             onDismissRequest()
             scope.launch { sheetState.hide() }
         },
-        sheetState = sheetState
+        sheetState = sheetState,
+        containerColor = MaterialTheme.colorScheme.background
     ) {
         Column(
             modifier = Modifier
@@ -109,7 +110,8 @@ fun NoteModalBottomSheet(
                 isHintVisible = viewModel.noteTitle.value.isHintVisible,
                 singleLine = true,
                 textStyle = MaterialTheme.typography.headlineLarge,
-                modifier = Modifier
+                modifier = Modifier,
+                color = MaterialTheme.colorScheme.onBackground
             )
             Spacer(modifier = Modifier.height(24.dp))
             TextField(
@@ -123,7 +125,9 @@ fun NoteModalBottomSheet(
                 shape = RoundedCornerShape(50.dp),
                 colors = TextFieldDefaults.colors(
                     focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent
+                    unfocusedIndicatorColor = Color.Transparent,
+                    focusedTextColor = MaterialTheme.colorScheme.onBackground,
+                    unfocusedTextColor = MaterialTheme.colorScheme.onBackground
                 ),
                 modifier = Modifier.fillMaxWidth()
             )
@@ -145,7 +149,9 @@ fun NoteModalBottomSheet(
                     shape = RoundedCornerShape(50.dp),
                     colors = TextFieldDefaults.colors(
                         focusedIndicatorColor = Color.Transparent,
-                        unfocusedIndicatorColor = Color.Transparent
+                        unfocusedIndicatorColor = Color.Transparent,
+                        focusedTextColor = MaterialTheme.colorScheme.onBackground,
+                        unfocusedTextColor = MaterialTheme.colorScheme.onBackground
                     ),
                     modifier = Modifier.weight(1f)
                 )

@@ -130,23 +130,28 @@ class MainActivity : AppCompatActivity() {
 
 @Composable
 fun ContentHiddenScreen(onRetry: () -> Unit) {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
+    Surface(
+        color = MaterialTheme.colorScheme.background
     ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center,
         ) {
-            Image(
-                imageVector = Icons.Default.Lock,
-                contentDescription = "locked",
-                modifier = Modifier
-                    .size(64.dp)
-            )
-            Text(text = "Content is restricted")
-            Button(onClick = onRetry) {
-                Text(text = "Authenticate")
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Lock,
+                    tint = MaterialTheme.colorScheme.primary,
+                    contentDescription = "locked",
+                    modifier = Modifier
+                        .size(64.dp)
+                )
+                Text(text = "Content is restricted")
+                Button(onClick = onRetry) {
+                    Text(text = "Authenticate")
+                }
             }
         }
     }
@@ -162,7 +167,6 @@ fun ContentHiddenScreenPreview() {
 @Composable
 fun MainScreen() {
     val navController = rememberNavController()
-    val coroutineScope = rememberCoroutineScope()
 
     Scaffold(
         bottomBar = {

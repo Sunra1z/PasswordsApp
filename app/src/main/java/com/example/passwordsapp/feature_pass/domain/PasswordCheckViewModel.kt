@@ -20,7 +20,6 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PasswordCheckViewModel @Inject constructor (
-    private val repository: NoteRepository,
     private val noteUseCases: NoteUseCases,
     private val encryptionManager: EncryptionManager
 ) : ViewModel() {

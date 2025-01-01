@@ -11,11 +11,13 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material.icons.filled.WarningAmber
+import androidx.compose.material.icons.rounded.Error
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -35,6 +37,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.passwordsapp.R
 import com.example.passwordsapp.feature_pass.domain.model.PasswordWarning
+import com.example.passwordsapp.ui.theme.grayCard
+import com.example.passwordsapp.ui.theme.greenAlertColor
+import com.example.passwordsapp.ui.theme.redAlertColor
+import com.example.passwordsapp.ui.theme.yellowAlertColor
 
 @Composable
 fun PasswordWarningDropdown(
@@ -50,10 +56,11 @@ fun PasswordWarningDropdown(
         modifier = modifier
             .padding(horizontal = 8.dp, vertical = 8.dp)
             .fillMaxWidth(),
+        shape = RoundedCornerShape(CornerSize(16.dp)),
+        elevation = CardDefaults.cardElevation(8.dp),
         colors = CardDefaults.cardColors(
-            containerColor = color.copy(alpha = 0.1f)
+            containerColor = color
         ),
-        shape = RoundedCornerShape(8.dp)
     ) {
         Column(modifier = Modifier.padding(8.dp)) {
             Row(
@@ -63,24 +70,28 @@ fun PasswordWarningDropdown(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(
-                    imageVector = Icons.Default.WarningAmber,
-                    contentDescription = null
+                    imageVector = Icons.Rounded.Error,
+                    contentDescription = "warning",
+                    tint = redAlertColor
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
                         text = title,
+                        color = MaterialTheme.colorScheme.onBackground,
                         style = MaterialTheme.typography.bodyMedium,
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        text = "${warnings.size} weak password(s)"
+                        text = "${warnings.size} weak password(s)",
+                        color = MaterialTheme.colorScheme.onBackground
                     )
                 }
                 Icon(
                     imageVector = Icons.Default.ArrowDropDown,
                     contentDescription = "Expand",
-                    modifier = Modifier.size(24.dp)
+                    modifier = Modifier.size(24.dp),
+                    tint = MaterialTheme.colorScheme.onBackground,
                 )
             }
             if (expanded) {
@@ -94,21 +105,53 @@ fun PasswordWarningDropdown(
     }
 }
 
-//@Preview(showBackground = true)
-//@Composable
-//fun PasswordWarningDropdownPreview() {
-//    val sampleWarnings = listOf(
-//        PasswordWarning(title = "Example Note",
-//            username = "example_user",
-//            password = "weakpassword123",
-//            score = 1,
-//            warning = "Your password is too weak.",
-//            suggestions = listOf("suggestion")),
-//    )
-//
-//    PasswordWarningDropdown(
-//        title = "Critical Warnings",
-//        warnings = sampleWarnings,
-//        color = Color(0xFFB00020)
-//    )
-//}
+
+@Preview(showBackground = true)
+@Composable
+fun PasswordWarningDropdownPreview() {
+    val sampleWarnings = listOf(
+        PasswordWarning(
+            title = "Critical Warning",
+            username = "user1",
+            password = "password1",
+            score = 0,
+            warning = "Your password is extremely weak.",
+            suggestions = listOf("Use a mix of characters.", "Avoid common words."),
+            noteId = 1
+        ),
+        PasswordWarning(
+            title = "High Warning",
+            username = "user2",
+            password = "password2",
+            score = 1,
+            warning = "Your password is very weak.",
+            suggestions = listOf("Add special characters.", "Increase length."),
+            noteId = 2
+        ),
+        PasswordWarning(
+            title = "Moderate Warning",
+            username = "user3",
+            password = "password3",
+            score = 2,
+            warning = "Your password is weak.",
+            suggestions = listOf("Use uppercase letters.", "Include numbers."),
+            noteId = 3
+        ),
+        PasswordWarning(
+            title = "Low Warning",
+            username = "user4",
+            password = "password4",
+            score = 3,
+            warning = "Your password is somewhat weak.",
+            suggestions = listOf("Avoid sequential characters.", "Use unique words."),
+            noteId = 4
+        )
+    )
+
+    PasswordWarningDropdown(
+        title = "Password Warnings",
+        warnings = sampleWarnings,
+        color = Color(0xFFB00020),
+        onOpenNote = { }
+    )
+}

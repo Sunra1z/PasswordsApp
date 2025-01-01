@@ -15,9 +15,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
+import androidx.compose.material.icons.filled.ArrowForwardIos
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.SwipeToDismissBoxValue
@@ -48,8 +52,7 @@ fun NoteItem(
     note: Note,
     onClick: () -> Unit,
     onDelete: () -> Unit,
-    animationDuration: Int = 500,
-    backgroundColor: Color = MaterialTheme.colorScheme.surface
+    animationDuration: Int = 500
 ) {
     var isRemoved by remember {
         mutableStateOf(false)
@@ -94,7 +97,7 @@ fun NoteItem(
                             .clickable { onClick() },
                         shape = RoundedCornerShape(CornerSize(10.dp)),
                         elevation = CardDefaults.cardElevation(8.dp),
-                        colors = CardDefaults.cardColors(containerColor = backgroundColor)
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
                     ) {
                         Row {
                             NoteIcon(noteTitle = note.title)
@@ -106,14 +109,20 @@ fun NoteItem(
                                     text = note.title,
                                     modifier = Modifier.padding(16.dp, 16.dp, 0.dp, 6.dp),
                                     fontSize = 16.sp,
-                                    fontWeight = FontWeight.Bold
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.onBackground
                                 )
-                                Text(text = "••••••••", modifier = Modifier.padding(16.dp, 0.dp, 0.dp, 6.dp), fontSize = 12.sp)
+                                Text(text = "••••••••",
+                                    modifier = Modifier.padding(16.dp, 0.dp, 0.dp, 6.dp),
+                                    fontSize = 12.sp,
+                                    color = MaterialTheme.colorScheme.onBackground
+                                )
                             }
                             Spacer(modifier = Modifier.weight(1f))
-                            Image(
-                                painter = painterResource(id = R.drawable.baseline_arrow_forward_ios_24),
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.ArrowForwardIos,
                                 contentDescription = "detail",
+                                tint = MaterialTheme.colorScheme.onBackground,
                                 modifier = Modifier
                                     .padding(end = 12.dp)
                                     .size(24.dp)

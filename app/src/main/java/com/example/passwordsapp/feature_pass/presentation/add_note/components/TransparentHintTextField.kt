@@ -23,6 +23,7 @@ fun TransparentHintTextField(
     onFocusChange: (FocusState) -> Unit,
     isHintVisible: Boolean,
     singleLine: Boolean,
+    color: Color,
     modifier: Modifier,
     textStyle: TextStyle,
     visualTransformation: VisualTransformation = VisualTransformation.None,
@@ -37,7 +38,7 @@ fun TransparentHintTextField(
             value = text,
             onValueChange = onValueChange,
             singleLine = singleLine,
-            textStyle = textStyle,
+            textStyle = textStyle.copy(color = color),
             visualTransformation = visualTransformation,
             keyboardOptions = keyboardOptions,
             modifier = Modifier

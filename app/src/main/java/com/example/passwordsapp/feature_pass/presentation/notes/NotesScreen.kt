@@ -81,11 +81,11 @@ fun NotesScreen(
    var showSnackbar by rememberSaveable { mutableStateOf(false) }
 
    Scaffold(
-      containerColor = Color.White,
+      containerColor = MaterialTheme.colorScheme.background,
       topBar = {
          TopAppBar(
             colors = TopAppBarDefaults.topAppBarColors(
-               containerColor = Color(0x80FFFFFF), // Semi-transparent white
+               containerColor = MaterialTheme.colorScheme.background,
                titleContentColor = MaterialTheme.colorScheme.primary,
             ),
             title = {
@@ -107,7 +107,10 @@ fun NotesScreen(
                   onDismissRequest = { menuExpanded.value = false }
                ) {
                   DropdownMenuItem(
-                     text = { Text("Sort") },
+                     text = { Text(
+                        text = "Sort",
+                        color = MaterialTheme.colorScheme.onBackground
+                     ) },
                      onClick = {
                         viewModel.onEvent(NotesEvent.ToggleOrderSection)
                         menuExpanded.value = false
@@ -165,7 +168,6 @@ fun NotesScreen(
                items(state.notes, key = { it.id!! }) { note ->
                   NoteItem(
                      note = note,
-                     backgroundColor = grayishCard,
                      onClick = {
                         scope.launch {
                            selectedNoteId = note.id
