@@ -8,6 +8,7 @@ import com.example.passwordsapp.feature_pass.domain.model.PasswordWarning
 import com.example.passwordsapp.feature_pass.domain.repository.NoteRepository
 import com.example.passwordsapp.feature_pass.domain.usecase.NoteUseCases
 import com.example.passwordsapp.feature_pass.domain.util.EncryptionManager
+import com.example.passwordsapp.feature_pass.domain.util.checkPasswordBreach
 import com.nulabinc.zxcvbn.Zxcvbn
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -29,6 +30,9 @@ class PasswordCheckViewModel @Inject constructor (
     private val _passwordWarnings = MutableStateFlow<List<PasswordWarning>>(emptyList())
     val passwordWarnings: StateFlow<List<PasswordWarning>> = _passwordWarnings
 
+    private val _passwordLeaks = MutableStateFlow<List<PasswordWarning>>(emptyList())
+    val passwordLeaks: StateFlow<List<PasswordWarning>> = _passwordLeaks
+
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading
 
@@ -39,7 +43,9 @@ class PasswordCheckViewModel @Inject constructor (
                 .flowOn(Dispatchers.IO) // Ensure Flow operates on IO dispatcher
                 .collect { notes ->
                     val analyzedWarnings = analyzeNotePasswords(notes) // Process the list of notes
+                    val leakedPasswords = checkPasswordForBreaches(notes)
                     _passwordWarnings.value = analyzedWarnings
+                    _passwordLeaks.value = leakedPasswords
                     _isLoading.value = false // Set loading state to false after processing
                 }
         }
@@ -73,6 +79,40 @@ class PasswordCheckViewModel @Inject constructor (
                     "Error analyzing password for note: ${note.title}",
                     e
                 )
+                null
+            }
+        }
+    }
+
+    private suspend fun checkPasswordForBreaches(notes: List<Note>): List<PasswordWarning> {
+        return notes.mapNotNull { note ->
+            try {
+                // Decryption and breach check
+                withContext(Dispatchers.IO) {
+                    val decryptedPassword = encryptionManager.decrypt(note.password, note.passwordIv)
+                    val decryptedUsername = encryptionManager.decrypt(note.username, note.usernameIv)
+                    val passwordString = decryptedPassword.toString(Charsets.UTF_8)
+
+                    val breachCount = checkPasswordBreach(passwordString)
+
+                    if (breachCount > 0){
+                        PasswordWarning(
+                            title = note.title,
+                            username = decryptedUsername.toString(Charsets.UTF_8),
+                            password = passwordString,
+                            score = 0,
+                            warning = "Password has been breached $breachCount times!",
+                            suggestions = listOf(
+                                "Change this password immediately!"
+                            ),
+                            noteId = note.id
+                        )
+                    } else {
+                        null
+                    }
+                }
+            } catch (e: Exception){
+                Log.e("PasswordBreachChecker", "Error checking password breach for note: ${note.title}", e)
                 null
             }
         }

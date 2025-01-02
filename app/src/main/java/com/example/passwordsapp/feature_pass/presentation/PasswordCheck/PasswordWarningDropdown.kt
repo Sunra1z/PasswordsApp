@@ -1,6 +1,5 @@
 package com.example.passwordsapp.feature_pass.presentation.PasswordCheck
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -15,8 +14,6 @@ import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material.icons.filled.Warning
-import androidx.compose.material.icons.filled.WarningAmber
 import androidx.compose.material.icons.rounded.Error
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -31,22 +28,19 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.passwordsapp.R
 import com.example.passwordsapp.feature_pass.domain.model.PasswordWarning
-import com.example.passwordsapp.ui.theme.grayCard
-import com.example.passwordsapp.ui.theme.greenAlertColor
 import com.example.passwordsapp.ui.theme.redAlertColor
-import com.example.passwordsapp.ui.theme.yellowAlertColor
 
 @Composable
 fun PasswordWarningDropdown(
     title: String,
     warnings: List<PasswordWarning>,
-    color: Color,
+    cardColor: Color,
+    alertColor: Color,
+    subtext: String,
     onOpenNote: (Int?) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -59,7 +53,7 @@ fun PasswordWarningDropdown(
         shape = RoundedCornerShape(CornerSize(16.dp)),
         elevation = CardDefaults.cardElevation(8.dp),
         colors = CardDefaults.cardColors(
-            containerColor = color
+            containerColor = cardColor
         ),
     ) {
         Column(modifier = Modifier.padding(8.dp)) {
@@ -72,7 +66,7 @@ fun PasswordWarningDropdown(
                 Icon(
                     imageVector = Icons.Rounded.Error,
                     contentDescription = "warning",
-                    tint = redAlertColor
+                    tint = alertColor
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Column(modifier = Modifier.weight(1f)) {
@@ -83,7 +77,7 @@ fun PasswordWarningDropdown(
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        text = "${warnings.size} weak password(s)",
+                        text = subtext,
                         color = MaterialTheme.colorScheme.onBackground
                     )
                 }
@@ -151,7 +145,9 @@ fun PasswordWarningDropdownPreview() {
     PasswordWarningDropdown(
         title = "Password Warnings",
         warnings = sampleWarnings,
-        color = MaterialTheme.colorScheme.surface,
+        cardColor = MaterialTheme.colorScheme.surface,
+        alertColor = redAlertColor,
+        subtext = "Placeholder",
         onOpenNote = { }
     )
 }

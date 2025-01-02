@@ -67,8 +67,8 @@ fun PasswordWarningItem(
                     imageVector = Icons.TwoTone.Error,
                     contentDescription = "warning",
                     tint = when (warning.score){
-                        0, 1 -> redAlertColor
-                        2, 3 -> yellowAlertColor
+                        0 -> redAlertColor
+                        1, 2, 3 -> yellowAlertColor
                         else -> greenAlertColor
                     },
                     modifier = modifier
