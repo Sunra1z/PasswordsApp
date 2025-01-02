@@ -2,7 +2,10 @@ package com.example.passwordsapp.feature_pass.presentation.notes.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -15,13 +18,16 @@ import androidx.compose.ui.unit.dp
 import kotlin.random.Random
 
 @Composable
-fun NoteIcon(noteTitle: String) {
+fun NoteIcon(
+    noteTitle: String,
+    modifier: Modifier
+) {
     val firstLetter = noteTitle.firstOrNull()?.toString()?.uppercase() ?: ""
     val backgroundColor = remember { getRandomColor() }
     Box(
-        modifier = Modifier
-            .size(40.dp)
-            .background(backgroundColor, shape = RoundedCornerShape(8.dp)),
+        modifier = modifier
+            .size(36.dp)
+            .background(backgroundColor, shape = RoundedCornerShape(CornerSize(18.dp))),
         contentAlignment = Alignment.Center
     ) {
         Text(

@@ -151,7 +151,7 @@ fun PasswordWarningDropdownPreview() {
     PasswordWarningDropdown(
         title = "Password Warnings",
         warnings = sampleWarnings,
-        color = Color(0xFFB00020),
+        color = MaterialTheme.colorScheme.surface,
         onOpenNote = { }
     )
 }

@@ -157,13 +157,18 @@ fun NotesScreen(
             )
          }
          Spacer(modifier = Modifier.height(16.dp))
-         if (state.isLoading){
-            LazyColumn(modifier = Modifier.fillMaxSize()){
-               items(5){
-                  ShimmerEffect()
-               }
-            }
-         } else {
+         AnimatedVisibility(
+            visible = state.isLoading,
+            enter = fadeIn(),
+            exit = fadeOut()
+         ) {
+            // smth
+         }
+         AnimatedVisibility(
+            visible = !state.isLoading,
+            enter = fadeIn(),
+            exit = fadeOut()
+         ) {
             LazyColumn(modifier = Modifier.fillMaxSize()) {
                items(state.notes, key = { it.id!! }) { note ->
                   NoteItem(
@@ -189,12 +194,8 @@ fun NotesScreen(
       LaunchedEffect(snackbarHostState) {
          val result = snackbarHostState.showSnackbar(
             message = "Note deleted",
-//            actionLabel = "Undo",
             duration = SnackbarDuration.Short
          )
-//         if (result == SnackbarResult.ActionPerformed) {
-//            viewModel.onEvent(NotesEvent.RestoreNote)
-//         }
          showSnackbar = false
       }
    }

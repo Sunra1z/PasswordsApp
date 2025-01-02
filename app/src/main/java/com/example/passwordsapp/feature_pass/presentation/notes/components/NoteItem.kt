@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -38,6 +39,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -99,39 +101,62 @@ fun NoteItem(
                         elevation = CardDefaults.cardElevation(8.dp),
                         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
                     ) {
-                        Row {
-                            NoteIcon(noteTitle = note.title)
-                            Column(
-                                modifier = Modifier
-                                    .padding(1.dp)
+                            Row(
+                                modifier = Modifier,
+                                verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Text(
-                                    text = note.title,
-                                    modifier = Modifier.padding(16.dp, 16.dp, 0.dp, 6.dp),
-                                    fontSize = 16.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    color = MaterialTheme.colorScheme.onBackground
+                                NoteIcon(note.title,
+                                    modifier = Modifier
+                                        .padding(8.dp)
                                 )
-                                Text(text = "••••••••",
-                                    modifier = Modifier.padding(16.dp, 0.dp, 0.dp, 6.dp),
-                                    fontSize = 12.sp,
-                                    color = MaterialTheme.colorScheme.onBackground
+                                Column(modifier = Modifier
+                                    .weight(1f)) {
+                                    Text(
+                                        text = note.title,
+                                        modifier = Modifier.padding(8.dp, 16.dp, 0.dp, 6.dp),
+                                        fontSize = 16.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        color = MaterialTheme.colorScheme.onBackground
+                                    )
+                                    Text(
+                                        text = "••••••••",
+                                        modifier = Modifier.padding(8.dp, 0.dp, 0.dp, 6.dp),
+                                        fontSize = 14.sp,
+                                        fontWeight = FontWeight.Medium,
+                                        color = MaterialTheme.colorScheme.onBackground
+                                    )
+                                }
+                                Icon(
+                                    imageVector = Icons.AutoMirrored.Filled.ArrowForwardIos,
+                                    contentDescription = "OpenNote",
+                                    modifier = Modifier
+                                        .size(24.dp),
+                                    tint = MaterialTheme.colorScheme.onBackground,
                                 )
                             }
-                            Spacer(modifier = Modifier.weight(1f))
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Filled.ArrowForwardIos,
-                                contentDescription = "detail",
-                                tint = MaterialTheme.colorScheme.onBackground,
-                                modifier = Modifier
-                                    .padding(end = 12.dp)
-                                    .size(24.dp)
-                                    .align(alignment = Alignment.CenterVertically)
-                            )
                         }
-                    }
                 }
             )
         }
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Preview(showBackground = true)
+@Composable
+fun NoteItemPreview() {
+    val sampleNote = Note(
+        title = "Sample Note",
+        username = byteArrayOf(),
+        password = byteArrayOf(),
+        timeStamp = System.currentTimeMillis(),
+        usernameIv = byteArrayOf(),
+        passwordIv = byteArrayOf(),
+        id = 1
+    )
+    NoteItem(
+        note = sampleNote,
+        onClick = { /* Handle click */ },
+        onDelete = { /* Handle delete */ }
+    )
 }

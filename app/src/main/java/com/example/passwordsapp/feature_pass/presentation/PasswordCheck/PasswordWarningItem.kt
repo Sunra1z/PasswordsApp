@@ -17,6 +17,7 @@ import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material.icons.rounded.Album
 import androidx.compose.material.icons.rounded.Error
 import androidx.compose.material.icons.twotone.AddAlert
+import androidx.compose.material.icons.twotone.Error
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -63,7 +64,7 @@ fun PasswordWarningItem(
         ) {
             Row {
                 Icon(
-                    imageVector = Icons.Rounded.Error,
+                    imageVector = Icons.TwoTone.Error,
                     contentDescription = "warning",
                     tint = when (warning.score){
                         0, 1 -> redAlertColor
@@ -72,7 +73,7 @@ fun PasswordWarningItem(
                     },
                     modifier = modifier
                         .padding(16.dp) // Reduced padding
-                        .size(48.dp) // Reduced size
+                        .size(36.dp) // Reduced size
                         .align(Alignment.CenterVertically)
                 )
                 Column(

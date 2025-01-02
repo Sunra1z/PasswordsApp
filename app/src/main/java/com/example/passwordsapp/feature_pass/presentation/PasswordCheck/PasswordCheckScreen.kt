@@ -67,15 +67,23 @@ fun PasswordCheckScreen(
                     CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
                 } else {
                     val filteredWarnings = passwordWarnings.filter { it.warning.isNotEmpty() }
-                    PasswordWarningDropdown(
-                        title = "Password Warnings",
-                        warnings = filteredWarnings,
-                        color = MaterialTheme.colorScheme.surface,
-                        onOpenNote = { noteId ->
-                            selectedNoteId = noteId
-                            isSheetOpen = true
-                        },
-                    )
+                    if (filteredWarnings.isEmpty()){
+                        PasswordNoWarningCard(
+                            title = "Great!",
+                            subtext = "All passwords are met with conditions",
+                            color = MaterialTheme.colorScheme.surface
+                        )
+                    } else{
+                        PasswordWarningDropdown(
+                            title = "Password Warnings",
+                            warnings = filteredWarnings,
+                            color = MaterialTheme.colorScheme.surface,
+                            onOpenNote = { noteId ->
+                                selectedNoteId = noteId
+                                isSheetOpen = true
+                            },
+                        )
+                    }
                 }
             }
 

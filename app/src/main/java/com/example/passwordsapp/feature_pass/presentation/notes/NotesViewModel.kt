@@ -70,7 +70,6 @@ class NotesViewModel @Inject constructor(
         getNotesJob?.cancel()
         viewModelScope.launch {
             _state.value = state.value.copy(isLoading = true)
-            kotlinx.coroutines.delay(1000) // Add a delay of 2 seconds
             noteUseCases.getNotesUseCase(noteOrder)
                 .onEach { notes ->
                     _state.value = state.value.copy(
