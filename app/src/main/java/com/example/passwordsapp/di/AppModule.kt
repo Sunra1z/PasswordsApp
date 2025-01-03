@@ -4,12 +4,15 @@ import android.app.Application
 import androidx.room.Room
 import com.example.passwordsapp.feature_pass.data.data_source.NoteDatabase
 import com.example.passwordsapp.feature_pass.data.repository.NoteRepositoryImpl
+import com.example.passwordsapp.feature_pass.data.repository.PasswordCheckRepositoryImpl
 import com.example.passwordsapp.feature_pass.domain.repository.NoteRepository
+import com.example.passwordsapp.feature_pass.domain.repository.PasswordCheckRepository
 import com.example.passwordsapp.feature_pass.domain.usecase.AddNoteUseCase
 import com.example.passwordsapp.feature_pass.domain.usecase.DeleteNoteUseCase
 import com.example.passwordsapp.feature_pass.domain.usecase.GetNoteUseCase
 import com.example.passwordsapp.feature_pass.domain.usecase.GetNotesUseCase
 import com.example.passwordsapp.feature_pass.domain.usecase.NoteUseCases
+import com.example.passwordsapp.feature_pass.domain.util.EncryptionManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -45,6 +48,15 @@ object AppModule {
             addNoteUseCase = AddNoteUseCase(repository),
             getNoteUseCase = GetNoteUseCase(repository)
         )
+    }
+
+    @Provides
+    @Singleton
+    fun providePasswordCheckRepository(
+        noteUseCases: NoteUseCases,
+        encryptionManager: EncryptionManager
+    ): PasswordCheckRepository {
+        return PasswordCheckRepositoryImpl(noteUseCases, encryptionManager)
     }
 
 }

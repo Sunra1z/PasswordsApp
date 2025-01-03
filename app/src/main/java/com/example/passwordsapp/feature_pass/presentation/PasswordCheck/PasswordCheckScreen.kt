@@ -1,5 +1,6 @@
 package com.example.passwordsapp.feature_pass.presentation.PasswordCheck
 
+import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -22,12 +23,9 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.passwordsapp.feature_pass.domain.PasswordCheckViewModel
 import com.example.passwordsapp.feature_pass.presentation.add_note.components.NoteModalBottomSheet
-import com.example.passwordsapp.feature_pass.presentation.notes.components.PassLoadingAnimation
 import com.example.passwordsapp.ui.theme.redAlertColor
 import com.example.passwordsapp.ui.theme.yellowAlertColor
 
@@ -45,7 +43,9 @@ fun PasswordCheckScreen(
     var isSheetOpen by rememberSaveable { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
-        viewModel.loadNotes() // Load and analyze notes on screen initialization
+        Log.d("PasswordCheckScreen", "LaunchedEffect: Start loading password data")
+        viewModel.loadPasswordData()
+        Log.d("PasswordCheckScreen", "LaunchedEffect: End loading password data")
     }
 
     Scaffold(
@@ -68,8 +68,10 @@ fun PasswordCheckScreen(
                     .padding(padding)
             ) {
                 if (isLoading) {
+                    Log.d("PasswordCheckScreen", "Loading state: true")
                     CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
                 } else {
+                    Log.d("PasswordCheckScreen", "Loading state: false")
                     Column {
                         val filteredLeaks = passwordLeaks.filter { it.warning.isNotEmpty() }
                         val filteredWarnings = passwordWarnings.filter { it.warning.isNotEmpty() }
@@ -84,6 +86,7 @@ fun PasswordCheckScreen(
                                 onOpenNote = { noteId ->
                                     selectedNoteId = noteId
                                     isSheetOpen = true
+                                    Log.d("PasswordCheckScreen", "Opening note with ID: $noteId")
                                 }
                             )
                         }
@@ -98,6 +101,7 @@ fun PasswordCheckScreen(
                                 onOpenNote = { noteId ->
                                     selectedNoteId = noteId
                                     isSheetOpen = true
+                                    Log.d("PasswordCheckScreen", "Opening note with ID: $noteId")
                                 }
                             )
                         }
