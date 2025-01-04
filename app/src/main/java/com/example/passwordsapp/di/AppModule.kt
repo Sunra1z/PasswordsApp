@@ -1,6 +1,7 @@
 package com.example.passwordsapp.di
 
 import android.app.Application
+import android.content.Context
 import androidx.room.Room
 import com.example.passwordsapp.feature_pass.data.data_source.NoteDatabase
 import com.example.passwordsapp.feature_pass.data.repository.NoteRepositoryImpl
@@ -16,6 +17,7 @@ import com.example.passwordsapp.feature_pass.domain.util.EncryptionManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
@@ -54,7 +56,7 @@ object AppModule {
     @Singleton
     fun providePasswordCheckRepository(
         noteUseCases: NoteUseCases,
-        encryptionManager: EncryptionManager
+        encryptionManager: EncryptionManager,
     ): PasswordCheckRepository {
         return PasswordCheckRepositoryImpl(noteUseCases, encryptionManager)
     }
