@@ -23,8 +23,10 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.passwordsapp.feature_pass.domain.PasswordCheckViewModel
+import com.example.passwordsapp.feature_pass.presentation.PasswordCheck.components.PasswordNoWarningCard
+import com.example.passwordsapp.feature_pass.presentation.PasswordCheck.components.PasswordWarningDropdown
 import com.example.passwordsapp.feature_pass.presentation.add_note.components.NoteModalBottomSheet
 import com.example.passwordsapp.ui.theme.redAlertColor
 import com.example.passwordsapp.ui.theme.yellowAlertColor
@@ -52,7 +54,7 @@ fun PasswordCheckScreen(
         topBar = {
             TopAppBar(
                 title = { Text(
-                    text = "Password Check",
+                    text = "Passwords",
                     color = MaterialTheme.colorScheme.primary
                 ) },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -96,7 +98,7 @@ fun PasswordCheckScreen(
                                 title = "Password Warnings",
                                 warnings = filteredWarnings,
                                 cardColor = MaterialTheme.colorScheme.surface,
-                                alertColor = yellowAlertColor,
+                                alertColor = Color.Yellow,
                                 subtext = "${filteredWarnings.size} weak passwords",
                                 onOpenNote = { noteId ->
                                     selectedNoteId = noteId

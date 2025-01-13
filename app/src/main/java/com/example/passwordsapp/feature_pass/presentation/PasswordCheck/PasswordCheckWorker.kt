@@ -25,7 +25,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
 @HiltWorker
-class PasswordCheckWorker @AssistedInject constructor( // TODO: Optimize notifications (now works only for Breaches)
+class PasswordCheckWorker @AssistedInject constructor( //
     @Assisted context: Context,
     @Assisted workerParams: WorkerParameters,
     private val passwordCheckRepository: PasswordCheckRepository

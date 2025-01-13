@@ -1,4 +1,4 @@
-package com.example.passwordsapp.feature_pass.presentation.PasswordCheck
+package com.example.passwordsapp.feature_pass.presentation.PasswordCheck.components
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row

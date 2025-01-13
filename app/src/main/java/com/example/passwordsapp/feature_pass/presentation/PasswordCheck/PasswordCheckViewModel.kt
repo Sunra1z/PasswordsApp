@@ -1,4 +1,4 @@
-package com.example.passwordsapp.feature_pass.domain
+package com.example.passwordsapp.feature_pass.presentation.PasswordCheck
 
 import android.util.Log
 import androidx.lifecycle.ViewModel

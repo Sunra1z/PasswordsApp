@@ -12,8 +12,15 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Error
+import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.Title
+import androidx.compose.material.icons.outlined.AccountCircle
+import androidx.compose.material.icons.outlined.Lock
+import androidx.compose.material.icons.outlined.Title
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -35,6 +42,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.passwordsapp.feature_pass.presentation.add_note.components.TransparentHintTextField
+import com.example.passwordsapp.ui.theme.savoyBlue
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
@@ -75,6 +83,9 @@ fun AddEditNoteScreen(
 
         OutlinedTextField(
             value = viewModel.noteTitle.value.text,
+            leadingIcon = {
+                Icon(Icons.Outlined.Title, contentDescription = "TitleIcon")
+            },
             colors = OutlinedTextFieldDefaults.colors(
                 focusedTextColor = MaterialTheme.colorScheme.onBackground,
                 unfocusedTextColor = MaterialTheme.colorScheme.onBackground),
@@ -92,6 +103,9 @@ fun AddEditNoteScreen(
 
         OutlinedTextField(
             value = viewModel.usernameContent.value.text,
+            leadingIcon = {
+                Icon(Icons.Outlined.AccountCircle, contentDescription = "UsernameIcon")
+            },
             colors = OutlinedTextFieldDefaults.colors(
                 focusedTextColor = MaterialTheme.colorScheme.onBackground,
                 unfocusedTextColor = MaterialTheme.colorScheme.onBackground),
@@ -109,6 +123,9 @@ fun AddEditNoteScreen(
 
         OutlinedTextField(
             value = viewModel.passContent.value.text,
+            leadingIcon = {
+                Icon(Icons.Outlined.Lock, contentDescription = "PassIcon")
+            },
             colors = OutlinedTextFieldDefaults.colors(
                 focusedTextColor = MaterialTheme.colorScheme.onBackground,
                 unfocusedTextColor = MaterialTheme.colorScheme.onBackground),
@@ -155,7 +172,9 @@ fun AddEditNoteScreen(
                 Text("Save")
             }
 
-            Button(onClick = { navController.navigateUp() }) {
+            Button(
+                onClick = { navController.navigateUp() }
+            ) {
                 Text("Cancel")
             }
         }

@@ -107,7 +107,7 @@ fun NoteItem(
                             ) {
                                 NoteIcon(note.title,
                                     modifier = Modifier
-                                        .padding(8.dp)
+                                        .padding(8.dp),
                                 )
                                 Column(modifier = Modifier
                                     .weight(1f)) {

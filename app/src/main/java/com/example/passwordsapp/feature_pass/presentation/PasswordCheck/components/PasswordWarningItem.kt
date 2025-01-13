@@ -1,7 +1,5 @@
-package com.example.passwordsapp.feature_pass.presentation.PasswordCheck
+package com.example.passwordsapp.feature_pass.presentation.PasswordCheck.components
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -10,39 +8,24 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
-import androidx.compose.material.icons.filled.Warning
-import androidx.compose.material.icons.rounded.Album
-import androidx.compose.material.icons.rounded.Error
-import androidx.compose.material.icons.twotone.AddAlert
 import androidx.compose.material.icons.twotone.Error
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.passwordsapp.R
 import com.example.passwordsapp.feature_pass.domain.model.PasswordWarning
-import com.example.passwordsapp.feature_pass.presentation.notes.components.NoteIcon
-import com.example.passwordsapp.ui.theme.grayCard
-import com.example.passwordsapp.ui.theme.grayishCard
 import com.example.passwordsapp.ui.theme.greenAlertColor
-import com.example.passwordsapp.ui.theme.moderatePassColor
 import com.example.passwordsapp.ui.theme.redAlertColor
-import com.example.passwordsapp.ui.theme.strongPassColor
-import com.example.passwordsapp.ui.theme.weakPassColor
 import com.example.passwordsapp.ui.theme.yellowAlertColor
 
 @Composable
@@ -67,7 +50,7 @@ fun PasswordWarningItem(
                     imageVector = Icons.TwoTone.Error,
                     contentDescription = "warning",
                     tint = when (warning.score){
-                        0 -> redAlertColor
+                        0 -> yellowAlertColor
                         1, 2, 3 -> yellowAlertColor
                         else -> greenAlertColor
                     },
@@ -94,17 +77,17 @@ fun PasswordWarningItem(
                             color = MaterialTheme.colorScheme.error
                         )
                     }
-                    if (warning.suggestions.isNotEmpty()) {
-                        Spacer(modifier = Modifier.height(2.dp)) // Reduced spacing
-                        warning.suggestions.forEach { suggestion ->
-                            Text(
-                                text = "- $suggestion",
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onBackground,
-                                modifier = Modifier.padding(start = 4.dp) // Reduced padding
-                            )
-                        }
-                    }
+//                    if (warning.suggestions.isNotEmpty()) {
+//                        Spacer(modifier = Modifier.height(2.dp)) // Reduced spacing
+//                        warning.suggestions.forEach { suggestion ->
+//                            Text(
+//                                text = "- $suggestion",
+//                                style = MaterialTheme.typography.bodyMedium,
+//                                color = MaterialTheme.colorScheme.onBackground,
+//                                modifier = Modifier.padding(start = 4.dp) // Reduced padding
+//                            )
+//                        }
+//                    }
                 }
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowForwardIos,
@@ -128,7 +111,7 @@ fun PasswordWarningItemPreview() {
         title = "Example Note",
         username = "example_user",
         password = "weakpassword123",
-        score = 1,
+        score = 0,
         warning = "Your password is too weak.",
         suggestions = listOf(
             "Use at least one special character.",
