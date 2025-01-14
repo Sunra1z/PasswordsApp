@@ -14,6 +14,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -87,9 +88,8 @@ class MainActivity : AppCompatActivity() {
                     is BiometricPromptManager.BiometricResult.AuthenticationError,
                     is BiometricPromptManager.BiometricResult.AuthenticationFailed -> {
                         // Handle authentication error or failure
-                        preferencesRepository.darkThemeEnabled.collect { darkThemeEnabled ->
                             setContent {
-                                PasswordsAppTheme(darkTheme = darkThemeEnabled) {
+                                PasswordsAppTheme(darkTheme = isSystemInDarkTheme()) {
                                     Surface(
                                         color = MaterialTheme.colorScheme.background
                                     ) {
@@ -101,7 +101,6 @@ class MainActivity : AppCompatActivity() {
                                         })
                                     }
                                 }
-                            }
                         }
                     }
                     else -> {

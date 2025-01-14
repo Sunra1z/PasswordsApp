@@ -2,6 +2,8 @@ package com.example.passwordsapp.feature_pass.presentation.notes
 
 import android.graphics.drawable.Icon
 import android.widget.Toast
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -43,9 +45,9 @@ import com.example.passwordsapp.ui.theme.PasswordsAppTheme
 val settingsButtons = listOf(
     SettingButtons("Export passwords as CSV", "Export all your data as CSV file", "Export", icon = Icons.Default.Save),
     SettingButtons("Import passwords from CSV", "Imports existing data from your CSV file", "Import", icon = Icons.Default.FileUpload ),
-    SettingButtons("About", "App information", "about"),
     SettingButtons("Password Alerts", "PasswordsApp will notify you when your passwords are found online.", "Notifications", icon = Icons.Filled.AddAlert),
-    SettingButtons("Appearance", "Change the theme of application", "Theme", icon = Icons.Filled.DarkMode)
+    SettingButtons("Appearance", "Change the theme of application", "Theme", icon = Icons.Filled.DarkMode),
+    SettingButtons("About", "App information", "about")
 )
 
 
@@ -57,8 +59,6 @@ fun SettingsScreen(
     val context = LocalContext.current
     val notificationsEnabled by viewModel.notificationsEnabled.collectAsState()
     val darkThemeEnabled by viewModel.darkThemeEnabled.collectAsState()
-
-    PasswordsAppTheme(darkThemeEnabled) {
         Scaffold(
             topBar = {
                 TopAppBar(
@@ -145,5 +145,4 @@ fun SettingsScreen(
                 }
             }
         )
-    }
 }

@@ -125,7 +125,7 @@ fun NotesScreen(
             onClick = {
                navController.navigate(Screen.AddEditNoteScreen.route)
             },
-            containerColor = savoyBlue
+            containerColor = MaterialTheme.colorScheme.primary
          ) {
             Icon(imageVector = Icons.Default.Add,
                contentDescription = "Add note",
