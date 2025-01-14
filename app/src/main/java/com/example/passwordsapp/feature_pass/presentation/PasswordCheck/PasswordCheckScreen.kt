@@ -6,6 +6,9 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.NoEncryptionGmailerrorred
+import androidx.compose.material.icons.rounded.WarningAmber
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
@@ -119,7 +122,8 @@ fun PasswordCheckScreen(
                                 warnings = filteredLeaks,
                                 cardColor = MaterialTheme.colorScheme.surface,
                                 alertColor = redAlertColor,
-                                subtext = "${filteredLeaks.size} leaked passwords",
+                                icon = Icons.Rounded.WarningAmber,
+                                subtext = "${filteredLeaks.size} found",
                                 onOpenNote = { noteId ->
                                     selectedNoteId = noteId
                                     isSheetOpen = true
@@ -130,11 +134,12 @@ fun PasswordCheckScreen(
 
                         if (filteredWarnings.isNotEmpty()) {
                             PasswordWarningDropdown(
-                                title = "Password Warnings",
+                                title = "Weak passwords",
                                 warnings = filteredWarnings,
                                 cardColor = MaterialTheme.colorScheme.surface,
                                 alertColor = Color.Yellow,
-                                subtext = "${filteredWarnings.size} weak passwords",
+                                icon = Icons.Rounded.NoEncryptionGmailerrorred,
+                                subtext = "${filteredWarnings.size} found",
                                 onOpenNote = { noteId ->
                                     selectedNoteId = noteId
                                     isSheetOpen = true

@@ -19,7 +19,7 @@ val moderatePassColor = Color(0xFFF4E8C8)
 val strongPassColor = Color(0xFFCCE2D1)
 
 val greenAlertColor = Color(0xFF326B40)
-val redAlertColor = Color(0xFF671A0F)
+val redAlertColor = Color(0xFFF23A4A)
 val yellowAlertColor = Color(0xFFE7B751)
 
 val grayCard = Color(0xFFE2E2E2)

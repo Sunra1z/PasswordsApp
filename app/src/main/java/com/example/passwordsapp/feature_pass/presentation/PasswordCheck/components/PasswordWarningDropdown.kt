@@ -1,6 +1,7 @@
 package com.example.passwordsapp.feature_pass.presentation.PasswordCheck.components
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -14,7 +15,10 @@ import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.Circle
 import androidx.compose.material.icons.rounded.Error
+import androidx.compose.material.icons.rounded.WarningAmber
+import androidx.compose.material.icons.sharp.WarningAmber
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -28,6 +32,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -40,6 +45,7 @@ fun PasswordWarningDropdown(
     warnings: List<PasswordWarning>,
     cardColor: Color,
     alertColor: Color,
+    icon: ImageVector,
     subtext: String,
     onOpenNote: (Int?) -> Unit,
     modifier: Modifier = Modifier
@@ -63,12 +69,21 @@ fun PasswordWarningDropdown(
                     .clickable { expanded = !expanded },
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Icon(
-                    imageVector = Icons.Rounded.Error,
-                    contentDescription = "warning",
-                    tint = alertColor
-                )
-                Spacer(modifier = Modifier.width(8.dp))
+                Box(modifier = Modifier.size(48.dp)) {
+                    Icon(
+                        imageVector = Icons.Default.Circle,
+                        contentDescription = "Circle Icon",
+                        tint = alertColor,
+                        modifier = Modifier.size(48.dp)
+                    )
+                    Icon(
+                        imageVector = icon,
+                        contentDescription = "Warning Icon",
+                        tint = Color.Black,
+                        modifier = Modifier.size(24.dp).align(Alignment.Center)
+                    )
+                }
+                Spacer(modifier = Modifier.width(12.dp))
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
                         text = title,
@@ -148,6 +163,7 @@ fun PasswordWarningDropdownPreview() {
         cardColor = MaterialTheme.colorScheme.surface,
         alertColor = redAlertColor,
         subtext = "Placeholder",
-        onOpenNote = { }
+        onOpenNote = { },
+        icon = Icons.Rounded.WarningAmber
     )
 }
