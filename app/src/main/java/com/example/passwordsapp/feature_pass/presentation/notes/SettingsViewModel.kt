@@ -7,12 +7,16 @@ import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.passwordsapp.feature_pass.domain.repository.PreferencesRepository
 import com.example.passwordsapp.feature_pass.domain.usecase.NoteUseCases
 import com.example.passwordsapp.feature_pass.domain.util.EncryptionManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
@@ -23,8 +27,16 @@ import javax.inject.Inject
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
     private val noteUseCases: NoteUseCases,
-    private val encryptionManager: EncryptionManager
+    private val encryptionManager: EncryptionManager,
+    private val repository: PreferencesRepository
 ) : ViewModel() {
+
+    // Preferences as StateFlow
+    val darkThemeEnabled: StateFlow<Boolean> = repository.darkThemeEnabled
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
+
+    val notificationsEnabled: StateFlow<Boolean> = repository.notificationEnabled
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), true)
 
     fun exportDataAsCSV(context: Context){
         viewModelScope.launch(Dispatchers.IO){
@@ -33,7 +45,7 @@ class SettingsViewModel @Inject constructor(
             val notes = noteUseCases.getNotesUseCase().flowOn(Dispatchers.IO).first()
             try {
                 FileWriter(csvFile).use { writer ->
-                    writer.append("Title,Username,Password")
+                    writer.append("Title,Username,Password\n")
                     notes.forEach { note ->
                         val decryptedUsername = encryptionManager.decrypt(
                             iv = note.username,
@@ -57,6 +69,19 @@ class SettingsViewModel @Inject constructor(
                 }
             }
         }
+
+    fun setThemeMode(mode: Boolean){
+        viewModelScope.launch {
+            repository.setDarkTheme(mode)
+        }
+    }
+
+    fun setNotificationsEnabled(enabled: Boolean){
+        viewModelScope.launch {
+            repository.setNotificationsEnabled(enabled)
+        }
+    }
+
 
 
 

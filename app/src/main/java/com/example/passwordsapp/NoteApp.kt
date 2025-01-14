@@ -3,9 +3,7 @@ package com.example.passwordsapp
 import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.os.Build
 import android.util.Log
-import androidx.core.os.BuildCompat
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
 import androidx.work.Constraints
@@ -74,7 +72,6 @@ class NoteApp : Application(), Configuration.Provider {
             }
     }
 
-
     private fun setupTestWork() { // for Debugging Notification purposes
         Log.d("NoteApp", "Setting up test work")
 
@@ -105,18 +102,16 @@ class NoteApp : Application(), Configuration.Provider {
 
 
     private fun createNotificationChannel() {
-        if (Build.VERSION.SDK_INT >= 26) {
-            Log.d("NoteApp", "Creating notification channel")
-            val name = "Password Check Notifications"
-            val descriptionText = "Notifications for compromised or weak passwords"
-            val importance = NotificationManager.IMPORTANCE_DEFAULT
-            val channel = NotificationChannel("PASSWORD_CHECK_CHANNEL", name, importance).apply {
-                description = descriptionText
-            }
-            val notificationManager: NotificationManager =
-                getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-            notificationManager.createNotificationChannel(channel)
-            Log.d("NoteApp", "Notification channel created")
+        Log.d("NoteApp", "Creating notification channel")
+        val name = "Password Check Notifications"
+        val descriptionText = "Notifications for compromised or weak passwords"
+        val importance = NotificationManager.IMPORTANCE_DEFAULT
+        val channel = NotificationChannel("PASSWORD_CHECK_CHANNEL", name, importance).apply {
+            description = descriptionText
         }
+        val notificationManager: NotificationManager =
+            getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.createNotificationChannel(channel)
+        Log.d("NoteApp", "Notification channel created")
     }
 }

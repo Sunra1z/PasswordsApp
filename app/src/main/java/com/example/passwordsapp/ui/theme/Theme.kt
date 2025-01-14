@@ -20,13 +20,13 @@ private val DarkColorScheme = darkColorScheme(
     tertiary = Pink80,
     background = Color(0xFF303030),
     surface = Color(0xFF414141),
-    onSurface = Color(0xFF4D4D4D),
+    onSurface = Color(0xFFFFFFFF),
     error = Color(0xFFFF6659),
     onPrimary = Color(0xFFF8F7F7),
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = savoyBlue,
+    primary = tropicalIndigo,
     secondary = PurpleGrey40,
     tertiary = Pink40,
     background = Color(0xFFF4F4F8),
@@ -39,10 +39,10 @@ private val LightColorScheme = lightColorScheme(
 
 @Composable
 fun PasswordsAppTheme(
-    useDarkTheme: Boolean = isSystemInDarkTheme(),
+    darkTheme: Boolean,
     content: @Composable() () -> Unit
 ) {
-    val colors = if (!useDarkTheme) {
+    val colors = if (!darkTheme) {
         LightColorScheme
     } else {
         DarkColorScheme

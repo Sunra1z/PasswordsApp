@@ -41,6 +41,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.passwordsapp.feature_pass.domain.repository.PreferencesRepository
 import com.example.passwordsapp.feature_pass.presentation.PasswordCheck.PasswordCheckScreen
 import com.example.passwordsapp.feature_pass.presentation.notes.SettingsScreen
 import com.example.passwordsapp.feature_pass.presentation.add_note.AddEditNoteScreen
@@ -51,6 +52,7 @@ import com.example.passwordsapp.feature_pass.presentation.util.Screen
 import com.example.passwordsapp.ui.theme.PasswordsAppTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -58,6 +60,9 @@ class MainActivity : AppCompatActivity() {
     private val promptManager by lazy {
         BiometricPromptManager(this)
     }
+
+    @Inject
+    lateinit var preferencesRepository: PreferencesRepository
 
     @ExperimentalAnimationApi
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -71,56 +76,61 @@ class MainActivity : AppCompatActivity() {
                 when (result) {
                     is BiometricPromptManager.BiometricResult.AuthenticationSuccess -> {
                         // Authentication succeeded, proceed to the main content
-                        setContent {
-                            PasswordsAppTheme {
-                                MainScreen()
-
+                        preferencesRepository.darkThemeEnabled.collect { darkThemeEnabled ->
+                            setContent {
+                                PasswordsAppTheme(darkTheme = darkThemeEnabled) {
+                                    MainScreen()
+                                }
                             }
                         }
                     }
                     is BiometricPromptManager.BiometricResult.AuthenticationError,
                     is BiometricPromptManager.BiometricResult.AuthenticationFailed -> {
                         // Handle authentication error or failure
-                        setContent {
-                            PasswordsAppTheme {
-                                Surface(
-                                    color = MaterialTheme.colorScheme.background
-                                ) {
-                                    ContentHiddenScreen(onRetry = {
-                                        promptManager.showBiometricPrompt(
-                                            title = "Login to view your passwords",
-                                            description = "Without authentication content is prohibited"
-                                        )
-                                    })
+                        preferencesRepository.darkThemeEnabled.collect { darkThemeEnabled ->
+                            setContent {
+                                PasswordsAppTheme(darkTheme = darkThemeEnabled) {
+                                    Surface(
+                                        color = MaterialTheme.colorScheme.background
+                                    ) {
+                                        ContentHiddenScreen(onRetry = {
+                                            promptManager.showBiometricPrompt(
+                                                title = "Login to view your passwords",
+                                                description = "Without authentication content is prohibited"
+                                            )
+                                        })
+                                    }
                                 }
                             }
                         }
                     }
                     else -> {
-                        setContent {
-                            PasswordsAppTheme {
-                                Surface(
-                                    color = MaterialTheme.colorScheme.background
-                                ) {
-                                    Box(
-                                        modifier = Modifier.fillMaxSize(),
-                                        contentAlignment = Alignment.Center
+                        preferencesRepository.darkThemeEnabled.collect { darkThemeEnabled ->
+                            setContent {
+                                PasswordsAppTheme(darkTheme = darkThemeEnabled) {
+                                    Surface(
+                                        color = MaterialTheme.colorScheme.background
                                     ) {
-                                        Column(
-                                            horizontalAlignment = Alignment.CenterHorizontally,
-                                            verticalArrangement = Arrangement.Center
+                                        Box(
+                                            modifier = Modifier.fillMaxSize(),
+                                            contentAlignment = Alignment.Center
                                         ) {
-                                            Image(
-                                                imageVector = Icons.Default.Warning,
-                                                contentDescription = "locked",
-                                                modifier = Modifier
-                                                    .size(64.dp)
-                                            )
-                                            Text(
-                                                text = "It seems like your device has no security measures" +
-                                                        "\nTo use this app set PIN/Fingerprint/Face Unlock",
-                                                textAlign = TextAlign.Center
-                                            )
+                                            Column(
+                                                horizontalAlignment = Alignment.CenterHorizontally,
+                                                verticalArrangement = Arrangement.Center
+                                            ) {
+                                                Image(
+                                                    imageVector = Icons.Default.Warning,
+                                                    contentDescription = "locked",
+                                                    modifier = Modifier
+                                                        .size(64.dp)
+                                                )
+                                                Text(
+                                                    text = "It seems like your device has no security measures" +
+                                                            "\nTo use this app set PIN/Fingerprint/Face Unlock",
+                                                    textAlign = TextAlign.Center
+                                                )
+                                            }
                                         }
                                     }
                                 }
@@ -242,10 +252,8 @@ fun ContentHiddenScreen(onRetry: () -> Unit) {
 @Preview(showBackground = true)
 @Composable
 fun ContentHiddenScreenPreview() {
-    PasswordsAppTheme {
         ContentHiddenScreen(onRetry = {})
     }
-}
 
 @Composable
 fun MainScreen() {

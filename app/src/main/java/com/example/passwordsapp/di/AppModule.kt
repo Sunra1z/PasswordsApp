@@ -6,8 +6,10 @@ import androidx.room.Room
 import com.example.passwordsapp.feature_pass.data.data_source.NoteDatabase
 import com.example.passwordsapp.feature_pass.data.repository.NoteRepositoryImpl
 import com.example.passwordsapp.feature_pass.data.repository.PasswordCheckRepositoryImpl
+import com.example.passwordsapp.feature_pass.data.repository.PreferencesRepositoryImpl
 import com.example.passwordsapp.feature_pass.domain.repository.NoteRepository
 import com.example.passwordsapp.feature_pass.domain.repository.PasswordCheckRepository
+import com.example.passwordsapp.feature_pass.domain.repository.PreferencesRepository
 import com.example.passwordsapp.feature_pass.domain.usecase.AddNoteUseCase
 import com.example.passwordsapp.feature_pass.domain.usecase.DeleteNoteUseCase
 import com.example.passwordsapp.feature_pass.domain.usecase.GetNoteUseCase
@@ -24,6 +26,7 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
+
 
     @Provides
     @Singleton
@@ -59,6 +62,14 @@ object AppModule {
         encryptionManager: EncryptionManager,
     ): PasswordCheckRepository {
         return PasswordCheckRepositoryImpl(noteUseCases, encryptionManager)
+    }
+
+    @Provides
+    @Singleton
+    fun providePreferencesRepository(
+        @ApplicationContext context: Context
+    ): PreferencesRepository {
+        return PreferencesRepositoryImpl(context)
     }
 
 }

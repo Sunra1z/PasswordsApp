@@ -52,7 +52,6 @@ fun AddEditNoteScreen(
 ) {
     val context = LocalContext.current
     var isError by remember { mutableStateOf(false) }
-    var username by remember { mutableStateOf("") }
 
     LaunchedEffect(key1 = true) {
         viewModel.eventFlow.collectLatest { event ->
@@ -87,8 +86,8 @@ fun AddEditNoteScreen(
                 Icon(Icons.Outlined.Title, contentDescription = "TitleIcon")
             },
             colors = OutlinedTextFieldDefaults.colors(
-                focusedTextColor = MaterialTheme.colorScheme.onBackground,
-                unfocusedTextColor = MaterialTheme.colorScheme.onBackground),
+                focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                unfocusedTextColor = MaterialTheme.colorScheme.onSurface),
             onValueChange = {
                 viewModel.onEvent(AddEditNoteEvent.EnteredTitle(it))
                 isError = it.isEmpty()
@@ -107,8 +106,8 @@ fun AddEditNoteScreen(
                 Icon(Icons.Outlined.AccountCircle, contentDescription = "UsernameIcon")
             },
             colors = OutlinedTextFieldDefaults.colors(
-                focusedTextColor = MaterialTheme.colorScheme.onBackground,
-                unfocusedTextColor = MaterialTheme.colorScheme.onBackground),
+                focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                unfocusedTextColor = MaterialTheme.colorScheme.onSurface),
             onValueChange = {
                 viewModel.onEvent(AddEditNoteEvent.EnteredUsername(it))
                 isError = it.isEmpty()
@@ -127,8 +126,8 @@ fun AddEditNoteScreen(
                 Icon(Icons.Outlined.Lock, contentDescription = "PassIcon")
             },
             colors = OutlinedTextFieldDefaults.colors(
-                focusedTextColor = MaterialTheme.colorScheme.onBackground,
-                unfocusedTextColor = MaterialTheme.colorScheme.onBackground),
+                focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                unfocusedTextColor = MaterialTheme.colorScheme.onSurface),
             onValueChange = {
                 viewModel.onEvent(AddEditNoteEvent.EnteredPassword(it))
                 isError = it.isEmpty()
