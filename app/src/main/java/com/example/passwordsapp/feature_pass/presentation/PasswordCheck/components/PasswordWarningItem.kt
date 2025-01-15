@@ -1,6 +1,8 @@
 package com.example.passwordsapp.feature_pass.presentation.PasswordCheck.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -8,9 +10,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
 import androidx.compose.material.icons.twotone.Error
+import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -24,8 +29,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.passwordsapp.feature_pass.domain.model.PasswordWarning
+import com.example.passwordsapp.feature_pass.presentation.notes.components.NoteIcon
 import com.example.passwordsapp.ui.theme.greenAlertColor
 import com.example.passwordsapp.ui.theme.redAlertColor
+import com.example.passwordsapp.ui.theme.savoyBlue
 import com.example.passwordsapp.ui.theme.yellowAlertColor
 
 @Composable
@@ -46,19 +53,24 @@ fun PasswordWarningItem(
             elevation = CardDefaults.cardElevation(8.dp)
         ) {
             Row {
-                Icon(
-                    imageVector = Icons.TwoTone.Error,
-                    contentDescription = "warning",
-                    tint = when (warning.score){
-                        0 -> yellowAlertColor
-                        1, 2, 3 -> yellowAlertColor
-                        else -> greenAlertColor
-                    },
-                    modifier = modifier
-                        .padding(16.dp) // Reduced padding
-                        .size(36.dp) // Reduced size
-                        .align(Alignment.CenterVertically)
-                )
+                Box(modifier = Modifier.padding(16.dp).size(36.dp)) {
+                    BadgedBox(
+                        badge = {
+                            Badge(
+                                containerColor = Color.Red,
+                                contentColor = Color.White,
+                                modifier = Modifier.size(12.dp)
+                            ) {
+                            }
+                        }
+                    ) {
+                        NoteIcon(
+                            warning.title,
+                            modifier = Modifier.align(Alignment.Center),
+                            backgroundColor = warning.color
+                        )
+                    }
+                }
                 Column(
                     modifier = Modifier
                         .weight(1f)
@@ -117,7 +129,8 @@ fun PasswordWarningItemPreview() {
             "Use at least one special character.",
             "Make your password longer."
         ),
-        noteId = 1
+        noteId = 1,
+        color = savoyBlue
     )
     PasswordWarningItem(
         warning = sampleWarning,

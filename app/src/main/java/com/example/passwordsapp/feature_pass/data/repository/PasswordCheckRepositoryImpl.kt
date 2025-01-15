@@ -1,11 +1,13 @@
 package com.example.passwordsapp.feature_pass.data.repository
 
 import android.util.Log
+import androidx.core.graphics.toColor
 import com.example.passwordsapp.feature_pass.domain.model.PasswordWarning
 import com.example.passwordsapp.feature_pass.domain.repository.PasswordCheckRepository
 import com.example.passwordsapp.feature_pass.domain.usecase.NoteUseCases
 import com.example.passwordsapp.feature_pass.domain.util.EncryptionManager
 import com.example.passwordsapp.feature_pass.domain.util.checkPasswordBreach
+import com.example.passwordsapp.feature_pass.domain.util.toColor
 import com.nulabinc.zxcvbn.Zxcvbn
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
@@ -37,7 +39,8 @@ class PasswordCheckRepositoryImpl @Inject constructor(
                     score = analysisResult.score,
                     warning = analysisResult.feedback.warning.orEmpty(),
                     noteId = note.id,
-                    suggestions = analysisResult.feedback.suggestions
+                    suggestions = analysisResult.feedback.suggestions,
+                    color = toColor(note.color) // yep that's cringe
                 )
             } catch (e: Exception) {
                 Log.e("PasswordCheckRepository", "getPasswordWarnings: Error processing note ${note.id}", e)
@@ -67,7 +70,8 @@ class PasswordCheckRepositoryImpl @Inject constructor(
                         score = 0,
                         warning = "Password has been breached $breachCount times!",
                         suggestions = listOf("Change this password immediately!"),
-                        noteId = note.id
+                        noteId = note.id,
+                        color = toColor(note.color)
                     )
                 } else {
                     null

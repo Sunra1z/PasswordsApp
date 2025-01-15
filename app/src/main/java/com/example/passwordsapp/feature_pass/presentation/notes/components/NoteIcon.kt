@@ -20,10 +20,10 @@ import kotlin.random.Random
 @Composable
 fun NoteIcon(
     noteTitle: String,
-    modifier: Modifier
+    modifier: Modifier,
+    backgroundColor: Color
 ) {
     val firstLetter = noteTitle.firstOrNull()?.toString()?.uppercase() ?: ""
-    val backgroundColor = remember { getRandomColor() }
     Box(
         modifier = modifier
             .size(36.dp)
@@ -35,12 +35,4 @@ fun NoteIcon(
             style = MaterialTheme.typography.labelLarge.copy(color = Color.White)
         )
     }
-}
-
-fun getRandomColor(): Color {
-    return Color(
-        red = Random.nextFloat(),
-        green = Random.nextFloat(),
-        blue = Random.nextFloat()
-    )
 }

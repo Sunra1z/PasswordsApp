@@ -40,7 +40,7 @@ fun BottomNavigationBar(navController: NavHostController) {
                     Icon(
                         imageVector = screen.icon,
                         contentDescription = screen.title,
-                        tint = if (isSelected) savoyBlue else Color.Gray
+                        tint = if (isSelected) MaterialTheme.colorScheme.primary else Color.Gray
                     )
                 },
                 label = { Text(screen.title, color = MaterialTheme.colorScheme.onBackground) },

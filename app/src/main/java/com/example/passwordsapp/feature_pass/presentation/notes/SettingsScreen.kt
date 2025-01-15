@@ -59,6 +59,7 @@ fun SettingsScreen(
     val context = LocalContext.current
     val notificationsEnabled by viewModel.notificationsEnabled.collectAsState()
     val darkThemeEnabled by viewModel.darkThemeEnabled.collectAsState()
+
         Scaffold(
             topBar = {
                 TopAppBar(

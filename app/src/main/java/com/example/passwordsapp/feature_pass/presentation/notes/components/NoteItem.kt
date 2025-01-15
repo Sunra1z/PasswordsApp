@@ -45,6 +45,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.passwordsapp.R
 import com.example.passwordsapp.feature_pass.domain.model.Note
+import com.example.passwordsapp.feature_pass.domain.util.toColor
 import kotlinx.coroutines.delay
 
 
@@ -105,9 +106,11 @@ fun NoteItem(
                                 modifier = Modifier,
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                NoteIcon(note.title,
+                                NoteIcon(
+                                    noteTitle = note.title,
                                     modifier = Modifier
                                         .padding(8.dp),
+                                    backgroundColor = toColor(note.color)
                                 )
                                 Column(modifier = Modifier
                                     .weight(1f)) {

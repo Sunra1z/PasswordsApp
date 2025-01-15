@@ -38,6 +38,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.passwordsapp.feature_pass.domain.model.PasswordWarning
 import com.example.passwordsapp.ui.theme.redAlertColor
+import com.example.passwordsapp.ui.theme.savoyBlue
 
 @Composable
 fun PasswordWarningDropdown(
@@ -126,7 +127,8 @@ fun PasswordWarningDropdownPreview() {
             score = 0,
             warning = "Your password is extremely weak.",
             suggestions = listOf("Use a mix of characters.", "Avoid common words."),
-            noteId = 1
+            noteId = 1,
+            color = savoyBlue
         ),
         PasswordWarning(
             title = "High Warning",
@@ -135,7 +137,8 @@ fun PasswordWarningDropdownPreview() {
             score = 1,
             warning = "Your password is very weak.",
             suggestions = listOf("Add special characters.", "Increase length."),
-            noteId = 2
+            noteId = 2,
+            color = savoyBlue
         ),
         PasswordWarning(
             title = "Moderate Warning",
@@ -144,7 +147,8 @@ fun PasswordWarningDropdownPreview() {
             score = 2,
             warning = "Your password is weak.",
             suggestions = listOf("Use uppercase letters.", "Include numbers."),
-            noteId = 3
+            noteId = 3,
+            color = savoyBlue
         ),
         PasswordWarning(
             title = "Low Warning",
@@ -153,7 +157,8 @@ fun PasswordWarningDropdownPreview() {
             score = 3,
             warning = "Your password is somewhat weak.",
             suggestions = listOf("Avoid sequential characters.", "Use unique words."),
-            noteId = 4
+            noteId = 4,
+            color = savoyBlue
         )
     )
 
