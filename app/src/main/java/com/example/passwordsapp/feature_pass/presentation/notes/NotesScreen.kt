@@ -56,6 +56,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.example.passwordsapp.feature_pass.domain.repository.PreferencesRepository
 import com.example.passwordsapp.feature_pass.presentation.add_note.components.NoteModalBottomSheet
 import com.example.passwordsapp.feature_pass.presentation.notes.components.NoteItem
 import com.example.passwordsapp.feature_pass.presentation.notes.components.OrderSection
@@ -182,7 +183,8 @@ fun NotesScreen(
                      onDelete = {
                         viewModel.onEvent(NotesEvent.DeleteNote(note))
                         showSnackbar = true
-                     }
+                     },
+                     hideUsername = state.hideUsername
                   )
                   Spacer(modifier = Modifier.height(16.dp))
                }

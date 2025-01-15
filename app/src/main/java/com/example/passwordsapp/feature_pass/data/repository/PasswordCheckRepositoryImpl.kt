@@ -27,14 +27,13 @@ class PasswordCheckRepositoryImpl @Inject constructor(
         val notes = noteUseCases.getNotesUseCase().flowOn(Dispatchers.IO).first()
         val warnings = notes.mapNotNull { note ->
             try {
-                val decryptedUsername = encryptionManager.decrypt(note.username, note.usernameIv)
                 val decryptedPassword = encryptionManager.decrypt(note.password, note.passwordIv)
                 val passwordString = decryptedPassword.toString(Charsets.UTF_8)
                 val analysisResult = zxcvbn.measure(passwordString)
 
                 PasswordWarning(
                     title = note.title,
-                    username = decryptedUsername.toString(Charsets.UTF_8),
+                    username = note.username,
                     password = passwordString,
                     score = analysisResult.score,
                     warning = analysisResult.feedback.warning.orEmpty(),
@@ -57,7 +56,6 @@ class PasswordCheckRepositoryImpl @Inject constructor(
         val breaches = notes.mapNotNull { note ->
             try {
                 val decryptedPassword = encryptionManager.decrypt(note.password, note.passwordIv)
-                val decryptedUsername = encryptionManager.decrypt(note.username, note.usernameIv)
                 val passwordString = decryptedPassword.toString(Charsets.UTF_8)
 
                 val breachCount = checkPasswordBreach(passwordString)
@@ -65,7 +63,7 @@ class PasswordCheckRepositoryImpl @Inject constructor(
                 if (breachCount > 0) {
                     PasswordWarning(
                         title = note.title,
-                        username = decryptedUsername.toString(Charsets.UTF_8),
+                        username = note.username,
                         password = passwordString,
                         score = 0,
                         warning = "Password has been breached $breachCount times!",

@@ -38,6 +38,9 @@ class SettingsViewModel @Inject constructor(
     val notificationsEnabled: StateFlow<Boolean> = repository.notificationEnabled
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), true)
 
+    val hideUsernameEnabled: StateFlow<Boolean> = repository.hideUsernameEnabled
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), true)
+
     fun exportDataAsCSV(context: Context){
         viewModelScope.launch(Dispatchers.IO){
             val downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)
@@ -47,15 +50,11 @@ class SettingsViewModel @Inject constructor(
                 FileWriter(csvFile).use { writer ->
                     writer.append("Title,Username,Password\n")
                     notes.forEach { note ->
-                        val decryptedUsername = encryptionManager.decrypt(
-                            iv = note.username,
-                            encryptedBytes = note.usernameIv
-                        ).toString(Charsets.UTF_8)
                         val decryptedPassword = encryptionManager.decrypt(
                             iv = note.password,
                             encryptedBytes = note.passwordIv
                         ).toString(Charsets.UTF_8)
-                        writer.append("${note.title},$decryptedUsername,$decryptedPassword\n")
+                        writer.append("${note.title},${note.username},$decryptedPassword\n")
                     }
                 }
                 withContext(Dispatchers.Main){
@@ -79,6 +78,12 @@ class SettingsViewModel @Inject constructor(
     fun setNotificationsEnabled(enabled: Boolean){
         viewModelScope.launch {
             repository.setNotificationsEnabled(enabled)
+        }
+    }
+
+    fun setUsernameHideEnabled(enabled: Boolean){
+        viewModelScope.launch {
+            repository.setHideUsernameEnabled(enabled)
         }
     }
 

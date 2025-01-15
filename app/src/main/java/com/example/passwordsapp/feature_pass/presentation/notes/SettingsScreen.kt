@@ -16,6 +16,7 @@ import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.FileUpload
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Save
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -47,6 +48,7 @@ val settingsButtons = listOf(
     SettingButtons("Import passwords from CSV", "Imports existing data from your CSV file", "Import", icon = Icons.Default.FileUpload ),
     SettingButtons("Password Alerts", "PasswordsApp will notify you when your passwords are found online.", "Notifications", icon = Icons.Filled.AddAlert),
     SettingButtons("Appearance", "Change the theme of application", "Theme", icon = Icons.Filled.DarkMode),
+    SettingButtons("Hide Username", "Hides account's username from preview card", "Username", icon = Icons.Filled.VisibilityOff),
     SettingButtons("About", "App information", "about")
 )
 
@@ -59,6 +61,7 @@ fun SettingsScreen(
     val context = LocalContext.current
     val notificationsEnabled by viewModel.notificationsEnabled.collectAsState()
     val darkThemeEnabled by viewModel.darkThemeEnabled.collectAsState()
+    val hideUsernameEnabled by viewModel.hideUsernameEnabled.collectAsState()
 
         Scaffold(
             topBar = {
@@ -133,6 +136,16 @@ fun SettingsScreen(
                                                 size = 28.dp,
                                                 padding = 5.dp,
                                                 onClick = { viewModel.setThemeMode(!darkThemeEnabled) }
+                                            )
+                                        }
+                                    }
+                                    "Username" -> {
+                                        Row(verticalAlignment = Alignment.CenterVertically){
+                                            Switch(
+                                                checked = hideUsernameEnabled,
+                                                onCheckedChange = { isChecked ->
+                                                    viewModel.setUsernameHideEnabled(isChecked)
+                                                }
                                             )
                                         }
                                     }

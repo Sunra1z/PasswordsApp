@@ -53,6 +53,7 @@ import kotlinx.coroutines.delay
 @Composable
 fun NoteItem(
     note: Note,
+    hideUsername: Boolean,
     onClick: () -> Unit,
     onDelete: () -> Unit,
     animationDuration: Int = 500
@@ -109,7 +110,7 @@ fun NoteItem(
                                 NoteIcon(
                                     noteTitle = note.title,
                                     modifier = Modifier
-                                        .padding(8.dp),
+                                        .padding(start = 12.dp, top = 12.dp, end = 16.dp, bottom = 12.dp),
                                     backgroundColor = toColor(note.color)
                                 )
                                 Column(modifier = Modifier
@@ -118,21 +119,27 @@ fun NoteItem(
                                         text = note.title,
                                         modifier = Modifier.padding(8.dp, 16.dp, 0.dp, 6.dp),
                                         fontSize = 16.sp,
-                                        fontWeight = FontWeight.Bold,
+                                        fontWeight = FontWeight.Medium,
                                         color = MaterialTheme.colorScheme.onBackground
                                     )
                                     Text(
-                                        text = "••••••••",
-                                        modifier = Modifier.padding(8.dp, 0.dp, 0.dp, 6.dp),
-                                        fontSize = 14.sp,
-                                        fontWeight = FontWeight.Medium,
-                                        color = MaterialTheme.colorScheme.onBackground
+                                        text = if(!hideUsername){
+                                            note.username
+                                        } else {
+                                            "********"
+                                        },
+                                        modifier = Modifier.padding(8.dp, 0.dp, 0.dp, 16.dp),
+                                        fontSize = 12.sp,
+                                        fontWeight = FontWeight.Normal,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                        style = MaterialTheme.typography.bodySmall
                                     )
                                 }
                                 Icon(
                                     imageVector = Icons.AutoMirrored.Filled.ArrowForwardIos,
                                     contentDescription = "OpenNote",
                                     modifier = Modifier
+                                        .padding(end = 12.dp)
                                         .size(24.dp),
                                     tint = MaterialTheme.colorScheme.onBackground,
                                 )
@@ -150,16 +157,16 @@ fun NoteItem(
 fun NoteItemPreview() {
     val sampleNote = Note(
         title = "Sample Note",
-        username = byteArrayOf(),
+        username = "tokaev.04@gmail.com",
         password = byteArrayOf(),
         timeStamp = System.currentTimeMillis(),
-        usernameIv = byteArrayOf(),
         passwordIv = byteArrayOf(),
         id = 1
     )
     NoteItem(
         note = sampleNote,
         onClick = { /* Handle click */ },
-        onDelete = { /* Handle delete */ }
+        onDelete = { /* Handle delete */ },
+        hideUsername = false
     )
 }

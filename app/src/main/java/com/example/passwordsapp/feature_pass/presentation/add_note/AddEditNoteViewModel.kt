@@ -48,10 +48,6 @@ class AddEditNoteViewModel @Inject constructor(
         viewModelScope.launch {
             noteUseCases.getNoteUseCase(noteId)?.also { note ->
                 currentNoteId = note.id
-                val decryptedUsername = encryptionManager.decrypt(
-                    note.username,
-                    note.usernameIv
-                )
                 val decryptedPassword = encryptionManager.decrypt(
                     note.password,
                     note.passwordIv
@@ -61,7 +57,7 @@ class AddEditNoteViewModel @Inject constructor(
                     isHintVisible = false,
                 )
                 _usernameContent.value = usernameContent.value.copy(
-                    text = String(decryptedUsername),
+                    text = note.username,
                     isHintVisible = false,
                 )
                 _passContent.value = passContent.value.copy(
@@ -114,14 +110,13 @@ class AddEditNoteViewModel @Inject constructor(
                             _eventFlow.emit(UiEvent.ShowSnackBar("Username and password cannot be empty"))
                             return@launch
                         }
-                        val (encryptedUsername, usernameIv) = encryptionManager.encrypt(usernameContent.value.text.toByteArray())
+                        val username = usernameContent.value.text
                         val (encryptedPassword, passwordIv) = encryptionManager.encrypt(passContent.value.text.toByteArray())
                         noteUseCases.addNoteUseCase(
                             Note(
                                 title = noteTitle.value.text,
-                                username = encryptedUsername,
+                                username = username,
                                 password = encryptedPassword,
-                                usernameIv = usernameIv,
                                 passwordIv = passwordIv,
                                 timeStamp = System.currentTimeMillis(),
                                 id = currentNoteId

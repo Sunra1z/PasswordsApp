@@ -5,11 +5,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.passwordsapp.feature_pass.domain.model.Note
+import com.example.passwordsapp.feature_pass.domain.repository.PreferencesRepository
 import com.example.passwordsapp.feature_pass.domain.usecase.NoteUseCases
 import com.example.passwordsapp.feature_pass.domain.util.NoteOrder
 import com.example.passwordsapp.feature_pass.domain.util.OrderType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -17,7 +19,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class NotesViewModel @Inject constructor(
-    private val noteUseCases: NoteUseCases
+    private val noteUseCases: NoteUseCases,
+    private val preferencesRepository: PreferencesRepository
 ) : ViewModel() {
 
     private val _state = mutableStateOf(NotesState())
@@ -29,6 +32,7 @@ class NotesViewModel @Inject constructor(
 
     init {
         getNotes(NoteOrder.Date(OrderType.Descending))
+        observePreferences()
     }
 
     fun onEvent(event: NotesEvent){
@@ -75,6 +79,17 @@ class NotesViewModel @Inject constructor(
                     )
                 }
                 .launchIn(this)
+        }
+    }
+
+    private fun observePreferences(){
+        viewModelScope.launch {
+            preferencesRepository.hideUsernameEnabled.collect{ hideUsernameEnabled ->
+                _state.value = state.value.copy(
+                    hideUsername = hideUsernameEnabled
+                )
+
+            }
         }
     }
 

@@ -16,6 +16,7 @@ class DataStoreManager() {
     object PreferenceKeys {
         val DARK_THEME = booleanPreferencesKey("dark_theme_enabled") // True/False
         val NOTIFICATIONS_ENABLED = booleanPreferencesKey("notifications_enabled") // True/False
+        val SHOW_USERNAME = booleanPreferencesKey("show_username_enabled") // True/False
     }
 
 }

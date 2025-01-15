@@ -10,10 +10,9 @@ import com.example.passwordsapp.feature_pass.domain.util.generateRandomColor
 @Entity
 data class Note(
     val title: String,
-    val username: ByteArray,
+    val username: String,
     val password: ByteArray,
     val timeStamp: Long,
-    val usernameIv: ByteArray,
     val passwordIv: ByteArray,
     val color: Int = generateRandomColor().toArgb(),
     @PrimaryKey val id: Int? = null
