@@ -58,6 +58,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.passwordsapp.feature_pass.domain.repository.PreferencesRepository
 import com.example.passwordsapp.feature_pass.presentation.add_note.components.NoteModalBottomSheet
+import com.example.passwordsapp.feature_pass.presentation.notes.components.NoItemsComposable
 import com.example.passwordsapp.feature_pass.presentation.notes.components.NoteItem
 import com.example.passwordsapp.feature_pass.presentation.notes.components.OrderSection
 import com.example.passwordsapp.feature_pass.presentation.notes.components.ShimmerEffect
@@ -169,24 +170,30 @@ fun NotesScreen(
             visible = !state.isLoading,
             enter = fadeIn(),
             exit = fadeOut()
-         ) {
-            LazyColumn(modifier = Modifier.fillMaxSize()) {
-               items(state.notes, key = { it.id!! }) { note ->
-                  NoteItem(
-                     note = note,
-                     onClick = {
-                        scope.launch {
-                           selectedNoteId = note.id
-                           isSheetOpen = true
-                        }
-                     },
-                     onDelete = {
-                        viewModel.onEvent(NotesEvent.DeleteNote(note))
-                        showSnackbar = true
-                     },
-                     hideUsername = state.hideUsername
-                  )
-                  Spacer(modifier = Modifier.height(16.dp))
+         ){
+            if(state.notes.isEmpty()){
+               NoItemsComposable { navController.navigate(Screen.AddEditNoteScreen.route) }
+            }
+            else
+            {
+               LazyColumn(modifier = Modifier.fillMaxSize()) {
+                  items(state.notes, key = { it.id!! }) { note ->
+                     NoteItem(
+                        note = note,
+                        onClick = {
+                           scope.launch {
+                              selectedNoteId = note.id
+                              isSheetOpen = true
+                           }
+                        },
+                        onDelete = {
+                           viewModel.onEvent(NotesEvent.DeleteNote(note))
+                           showSnackbar = true
+                        },
+                        hideUsername = state.hideUsername
+                     )
+                     Spacer(modifier = Modifier.height(16.dp))
+                  }
                }
             }
          }

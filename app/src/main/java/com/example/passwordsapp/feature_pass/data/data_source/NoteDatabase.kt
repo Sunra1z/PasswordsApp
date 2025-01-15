@@ -17,6 +17,15 @@ abstract class NoteDatabase : RoomDatabase() {
     companion object {
         const val DATABASE_NAME = "notes_db"
 
+        val MIGRATION_1_2 = object : Migration(1, 2) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                // Migration logic from version 1 to version 2
+                database.execSQL("""
+                    ALTER TABLE Note ADD COLUMN usernameIv BLOB NOT NULL DEFAULT X'00'
+                """.trimIndent())
+            }
+        }
+
         val MIGRATION_2_3 = object : Migration(2, 3) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 // Create a new table with the updated schema
