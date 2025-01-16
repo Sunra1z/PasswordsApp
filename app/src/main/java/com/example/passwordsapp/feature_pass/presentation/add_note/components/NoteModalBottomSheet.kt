@@ -40,6 +40,9 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.unit.dp
@@ -53,7 +56,9 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.passwordsapp.feature_pass.presentation.notes.components.NoteIcon
 import kotlinx.coroutines.flow.collectLatest
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -68,6 +73,7 @@ fun NoteModalBottomSheet(
     val context = LocalContext.current
     var passwordVisible by remember { mutableStateOf(false) }
     val clipboardManager = LocalClipboardManager.current
+    val focusRequester = remember { FocusRequester() }
 
     LaunchedEffect(noteId) {
         noteId?.let {
@@ -103,21 +109,37 @@ fun NoteModalBottomSheet(
                 .padding(16.dp)
         ) {
             Spacer(modifier = Modifier.height(8.dp))
-            TransparentHintTextField(
-                text = viewModel.noteTitle.value.text,
-                hint = viewModel.noteTitle.value.hint,
-                onValueChange = {
-                    viewModel.onEvent(AddEditNoteEvent.EnteredTitle(it))
-                },
-                onFocusChange = {
-                    viewModel.onEvent(AddEditNoteEvent.ChangeTitleFocus(it))
-                },
-                isHintVisible = viewModel.noteTitle.value.isHintVisible,
-                singleLine = true,
-                textStyle = MaterialTheme.typography.headlineLarge,
-                modifier = Modifier,
-                color = MaterialTheme.colorScheme.onBackground
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                NoteIcon(
+                    noteTitle = viewModel.noteTitle.value.text,
+                    fontSize = 24.sp,
+                    backgroundColor = viewModel.noteColor.value,
+                    modifier = Modifier
+                        .padding(12.dp)
+                        .size(64.dp)
+                )
+                TransparentHintTextField(
+                    text = viewModel.noteTitle.value.text,
+                    hint = viewModel.noteTitle.value.hint,
+                    onValueChange = {
+                        viewModel.onEvent(AddEditNoteEvent.EnteredTitle(it))
+                    },
+                    onFocusChange = {
+                        viewModel.onEvent(AddEditNoteEvent.ChangeTitleFocus(it))
+                        if (it.isFocused) {
+                            scope.launch { sheetState.expand() }
+                        }
+                    },
+                    isHintVisible = viewModel.noteTitle.value.isHintVisible,
+                    singleLine = true,
+                    textStyle = MaterialTheme.typography.headlineLarge,
+                    modifier = Modifier.focusRequester(focusRequester),
+                    color = MaterialTheme.colorScheme.onBackground
+                )
+            }
             Spacer(modifier = Modifier.height(24.dp))
             TextField(
                 value = viewModel.usernameContent.value.text,
@@ -134,7 +156,13 @@ fun NoteModalBottomSheet(
                     focusedTextColor = MaterialTheme.colorScheme.onSurface,
                     unfocusedTextColor = MaterialTheme.colorScheme.onSurface
                 ),
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .onFocusChanged {
+                        if (it.isFocused) {
+                            scope.launch { sheetState.expand() }
+                        }
+                    }
             )
             Spacer(modifier = Modifier.height(16.dp))
             Row(
@@ -158,7 +186,13 @@ fun NoteModalBottomSheet(
                         focusedTextColor = MaterialTheme.colorScheme.onSurface,
                         unfocusedTextColor = MaterialTheme.colorScheme.onSurface
                     ),
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier
+                        .weight(1f)
+                        .onFocusChanged {
+                            if (it.isFocused) {
+                                scope.launch { sheetState.expand() }
+                            }
+                        }
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Icon(

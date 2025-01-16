@@ -1,15 +1,19 @@
 package com.example.passwordsapp.feature_pass.presentation.PasswordCheck.components
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Circle
 import androidx.compose.material.icons.rounded.CheckCircle
+import androidx.compose.material.icons.rounded.CheckCircleOutline
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -45,12 +49,21 @@ fun PasswordNoWarningCard(
                     .fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Icon(
-                    imageVector = Icons.Rounded.CheckCircle,
-                    contentDescription = "warning",
-                    tint = Color.Green
-                )
-                Spacer(modifier = Modifier.width(8.dp))
+                Box(modifier = Modifier.size(48.dp)) {
+                    Icon(
+                        imageVector = Icons.Default.Circle,
+                        contentDescription = "Circle Icon",
+                        tint = Color.Green,
+                        modifier = Modifier.size(48.dp)
+                    )
+                    Icon(
+                        imageVector = Icons.Rounded.CheckCircleOutline,
+                        contentDescription = "Warning Icon",
+                        tint = Color.Black,
+                        modifier = Modifier.size(24.dp).align(Alignment.Center)
+                    )
+                }
+                Spacer(modifier = Modifier.width(12.dp))
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
                         text = title,

@@ -32,6 +32,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.passwordsapp.feature_pass.presentation.PasswordCheck.components.PasswordNoWarningCard
@@ -83,7 +84,8 @@ fun PasswordCheckScreen(
             TopAppBar(
                 title = { Text(
                     text = "Passwords Check",
-                    color = MaterialTheme.colorScheme.primary
+                    color = MaterialTheme.colorScheme.primary,
+                    fontWeight = FontWeight.Bold
                 ) },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.background,
@@ -151,7 +153,7 @@ fun PasswordCheckScreen(
                         if (filteredLeaks.isEmpty() && filteredWarnings.isEmpty()) {
                             PasswordNoWarningCard(
                                 title = "Great!",
-                                subtext = "All passwords are met with conditions",
+                                subtext = "All passwords met with conditions",
                                 color = MaterialTheme.colorScheme.surface
                             )
                         }

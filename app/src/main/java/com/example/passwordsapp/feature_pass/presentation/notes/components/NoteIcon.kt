@@ -14,6 +14,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import kotlin.random.Random
 
@@ -21,18 +22,20 @@ import kotlin.random.Random
 fun NoteIcon(
     noteTitle: String,
     modifier: Modifier,
-    backgroundColor: Color
+    backgroundColor: Color,
+    fontSize: TextUnit = TextUnit.Unspecified
 ) {
     val firstLetter = noteTitle.firstOrNull()?.toString()?.uppercase() ?: ""
     Box(
         modifier = modifier
             .size(36.dp)
-            .background(backgroundColor, shape = RoundedCornerShape(CornerSize(18.dp))),
+            .background(backgroundColor, shape = CircleShape),
         contentAlignment = Alignment.Center
     ) {
         Text(
             text = firstLetter,
-            style = MaterialTheme.typography.labelLarge.copy(color = Color.White)
+            style = MaterialTheme.typography.labelLarge.copy(color = Color.White),
+            fontSize = fontSize
         )
     }
 }
