@@ -2,10 +2,13 @@ package com.example.passwordsapp.feature_pass.presentation.PasswordCheck
 
 import android.content.Context
 import android.util.Log
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.NoEncryptionGmailerrorred
 import androidx.compose.material.icons.rounded.WarningAmber
@@ -30,11 +33,13 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.passwordsapp.feature_pass.presentation.PasswordCheck.components.CircleMeter
 import com.example.passwordsapp.feature_pass.presentation.PasswordCheck.components.PasswordNoWarningCard
 import com.example.passwordsapp.feature_pass.presentation.PasswordCheck.components.PasswordWarningDropdown
 import com.example.passwordsapp.feature_pass.presentation.add_note.components.NoteModalBottomSheet
@@ -84,12 +89,11 @@ fun PasswordCheckScreen(
             TopAppBar(
                 title = { Text(
                     text = "Passwords Check",
-                    color = MaterialTheme.colorScheme.primary,
                     fontWeight = FontWeight.Bold
                 ) },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.background,
-                    titleContentColor = MaterialTheme.colorScheme.primary,
+                    titleContentColor = MaterialTheme.colorScheme.onBackground,
                 )
             )
         },
@@ -113,10 +117,28 @@ fun PasswordCheckScreen(
                         )
                     }
                 } else {
+                    val filteredLeaks = passwordLeaks.filter { it.warning.isNotEmpty() }
+                    val filteredWarnings = passwordWarnings.filter { it.warning.isNotEmpty() }
                     Log.d("PasswordCheckScreen", "Loading state: false")
-                    Column {
-                        val filteredLeaks = passwordLeaks.filter { it.warning.isNotEmpty() }
-                        val filteredWarnings = passwordWarnings.filter { it.warning.isNotEmpty() }
+                    Column(
+                        modifier = Modifier.fillMaxSize(),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+
+                        Box(
+                            modifier = Modifier
+                                .padding(top = 16.dp, bottom = 16.dp),
+                            contentAlignment = Alignment.TopCenter,
+                        ) {
+                            CircleMeter(
+                                warningsCount = filteredWarnings.size, // Example count
+                                leaksCount = filteredLeaks.size, // Example count
+                                modifier = Modifier,
+                                middleText = "Warnings",
+                                backgroundColor = MaterialTheme.colorScheme.surface,
+                                allGoodColor = MaterialTheme.colorScheme.secondary
+                            )
+                        }
 
                         if (filteredLeaks.isNotEmpty()) {
                             PasswordWarningDropdown(
@@ -139,7 +161,7 @@ fun PasswordCheckScreen(
                                 title = "Weak passwords",
                                 warnings = filteredWarnings,
                                 cardColor = MaterialTheme.colorScheme.surface,
-                                alertColor = Color.Yellow,
+                                alertColor = yellowAlertColor,
                                 icon = Icons.Rounded.NoEncryptionGmailerrorred,
                                 subtext = "${filteredWarnings.size} found",
                                 onOpenNote = { noteId ->

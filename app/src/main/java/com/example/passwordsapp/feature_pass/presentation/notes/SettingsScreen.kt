@@ -70,13 +70,12 @@ fun SettingsScreen(
                     title = {
                         Text(
                             text = "Settings",
-                            color = MaterialTheme.colorScheme.primary,
                             fontWeight = FontWeight.Bold
                         )
                     },
                     colors = TopAppBarDefaults.topAppBarColors(
                         containerColor = MaterialTheme.colorScheme.background,
-                        titleContentColor = MaterialTheme.colorScheme.primary,
+                        titleContentColor = MaterialTheme.colorScheme.onBackground,
                     )
                 )
             },

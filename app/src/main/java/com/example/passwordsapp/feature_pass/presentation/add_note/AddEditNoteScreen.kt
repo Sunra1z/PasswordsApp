@@ -255,6 +255,15 @@ fun AddEditNoteScreen(
                     }
                 )
 
+                if (isError && viewModel.passContent.value.text.isEmpty()) {
+                    Text(
+                        text = "Password must not be empty.",
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    )
+                }
+
                 Row(modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically) {
                     Icon(
@@ -305,15 +314,6 @@ fun AddEditNoteScreen(
                         fontWeight = FontWeight.Light,
                         fontSize = 14.sp,
                         modifier = Modifier
-                    )
-                }
-
-                if (isError && viewModel.passContent.value.text.isEmpty()) {
-                    Text(
-                        text = "Password must not be empty.",
-                        color = MaterialTheme.colorScheme.error,
-                        style = MaterialTheme.typography.bodyMedium,
-                        modifier = Modifier.padding(bottom = 8.dp)
                     )
                 }
             }
