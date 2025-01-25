@@ -30,26 +30,30 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import com.example.passwordsapp.feature_pass.presentation.notes.components.NoteIcon
 
 @Composable
 fun ColorPickerDialog(
-    hue: Float,
+    initialHue: Float,
+    initialSaturation: Float,
+    initialValue: Float,
+    title: String,
     onDismissRequest: () -> Unit,
-    onColorSelected: (Float, Float) -> Unit
+    onColorSelected: (Float, Float, Float) -> Unit
 ) {
     val openDialog = remember { mutableStateOf(true) }
     val hsv = remember {
-        val hsv = floatArrayOf(0f, 0f, 0f)
-        android.graphics.Color.colorToHSV(Color.Blue.toArgb(), hsv)
-        mutableStateOf(
-            Triple(hsv[0], hsv[1], hsv[2])
-        )
+        mutableStateOf(Triple(initialHue, initialSaturation, initialValue))
     }
-
+    val backgroundColor = remember(hsv.value) {
+        mutableStateOf(Color.hsv(hsv.value.first, hsv.value.second, hsv.value.third))
+    }
 
     if (openDialog.value) {
         AlertDialog(
+            containerColor = MaterialTheme.colorScheme.surface,
             onDismissRequest = {
                 openDialog.value = false
                 onDismissRequest()
@@ -57,7 +61,8 @@ fun ColorPickerDialog(
             title = {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     IconButton(onClick = {
                         openDialog.value = false
@@ -68,9 +73,16 @@ fun ColorPickerDialog(
                             contentDescription = "CloseAlert"
                         )
                     }
+                    NoteIcon(
+                        noteTitle = title,
+                        fontSize = 24.sp,
+                        backgroundColor = backgroundColor.value,
+                        onClick = { },
+                        modifier = Modifier.size(64.dp)
+                    )
                     IconButton(onClick = {
                         openDialog.value = false
-                        onColorSelected(hsv.value.first, hsv.value.second) // Adjust as needed
+                        onColorSelected(hsv.value.first, hsv.value.second, hsv.value.third)
                     }) {
                         Icon(
                             imageVector = Icons.Default.Check,
@@ -86,9 +98,6 @@ fun ColorPickerDialog(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Top
                 ) {
-                    val backgroundColor = remember(hsv.value) {
-                        mutableStateOf(Color.hsv(hsv.value.first, hsv.value.second, hsv.value.third))
-                    }
                     SatValPanel(hue = hsv.value.first) { sat, value ->
                         hsv.value = Triple(hsv.value.first, sat, value)
                     }
@@ -96,13 +105,6 @@ fun ColorPickerDialog(
                     HueBar { hue ->
                         hsv.value = Triple(hue, hsv.value.second, hsv.value.third)
                     }
-                    Spacer(modifier = Modifier.height(32.dp))
-                    Box(
-                        modifier = Modifier
-                            .size(100.dp)
-                            .clip(CircleShape)
-                            .background(backgroundColor.value)
-                    )
                 }
             },
             confirmButton = {},

@@ -62,6 +62,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -109,11 +110,16 @@ fun AddEditNoteScreen(
     }
 
     if (showDialog.value) {
+        val hsv = FloatArray(3)
+        android.graphics.Color.colorToHSV(selectedColor.toArgb(), hsv)
         ColorPickerDialog(
-            hue = 0f,
+            initialHue = hsv[0],
+            initialSaturation = hsv[1],
+            initialValue = hsv[2],
+            title = viewModel.noteTitle.value.text,
             onDismissRequest = { showDialog.value = false },
-            onColorSelected = { hue, saturation ->
-                viewModel.onColorSelected(hue, saturation, 1f)
+            onColorSelected = { hue, saturation, value ->
+                viewModel.onColorSelected(hue, saturation, value)
                 showDialog.value = false
             }
         )
