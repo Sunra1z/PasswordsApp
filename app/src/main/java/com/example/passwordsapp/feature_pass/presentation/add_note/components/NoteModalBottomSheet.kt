@@ -59,6 +59,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.passwordsapp.feature_pass.presentation.notes.components.NoteIcon
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -72,6 +73,7 @@ fun NoteModalBottomSheet(
 ) {
     val context = LocalContext.current
     var passwordVisible by remember { mutableStateOf(false) }
+    val showDialog = remember { mutableStateOf(false) }
     val clipboardManager = LocalClipboardManager.current
     val focusRequester = remember { FocusRequester() }
 
@@ -79,6 +81,17 @@ fun NoteModalBottomSheet(
         noteId?.let {
             viewModel.loadNoteById(it)
         }
+    }
+
+    if (showDialog.value) {
+        ColorPickerDialog(
+            hue = 0f,
+            onDismissRequest = { showDialog.value = false },
+            onColorSelected = { hue, saturation ->
+                viewModel.onColorSelected(hue, saturation, 1f)
+                showDialog.value = false
+            }
+        )
     }
 
     LaunchedEffect(key1 = true) {
@@ -116,7 +129,8 @@ fun NoteModalBottomSheet(
                 NoteIcon(
                     noteTitle = viewModel.noteTitle.value.text,
                     fontSize = 24.sp,
-                    backgroundColor = viewModel.noteColor.value,
+                    backgroundColor = viewModel.selectedColor.value,
+                    onClick = { showDialog.value = true },
                     modifier = Modifier
                         .padding(12.dp)
                         .size(64.dp)
@@ -130,7 +144,10 @@ fun NoteModalBottomSheet(
                     onFocusChange = {
                         viewModel.onEvent(AddEditNoteEvent.ChangeTitleFocus(it))
                         if (it.isFocused) {
-                            scope.launch { sheetState.expand() }
+                            scope.launch {
+                                delay(200)
+                                sheetState.expand()
+                            }
                         }
                     },
                     isHintVisible = viewModel.noteTitle.value.isHintVisible,
@@ -160,7 +177,9 @@ fun NoteModalBottomSheet(
                     .fillMaxWidth()
                     .onFocusChanged {
                         if (it.isFocused) {
-                            scope.launch { sheetState.expand() }
+                            scope.launch {
+                                sheetState.expand()
+                            }
                         }
                     }
             )
@@ -190,7 +209,9 @@ fun NoteModalBottomSheet(
                         .weight(1f)
                         .onFocusChanged {
                             if (it.isFocused) {
-                                scope.launch { sheetState.expand() }
+                                scope.launch {
+                                    sheetState.expand()
+                                }
                             }
                         }
                 )

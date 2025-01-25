@@ -71,6 +71,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.passwordsapp.feature_pass.domain.util.generateRandomColor
+import com.example.passwordsapp.feature_pass.presentation.add_note.components.ColorPickerDialog
 import com.example.passwordsapp.feature_pass.presentation.add_note.components.NoteModalBottomSheet
 import com.example.passwordsapp.feature_pass.presentation.add_note.components.TransparentHintTextField
 import com.example.passwordsapp.feature_pass.presentation.notes.NotesEvent
@@ -90,8 +91,9 @@ fun AddEditNoteScreen(
     viewModel: AddEditNoteViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
+    val selectedColor by viewModel.selectedColor
     var isError by remember { mutableStateOf(false) }
-    val noteColor = viewModel.noteColor.value
+    val showDialog = remember { mutableStateOf(false) }
 
     LaunchedEffect(key1 = true) {
         viewModel.eventFlow.collectLatest { event ->
@@ -104,6 +106,17 @@ fun AddEditNoteScreen(
                 }
             }
         }
+    }
+
+    if (showDialog.value) {
+        ColorPickerDialog(
+            hue = 0f,
+            onDismissRequest = { showDialog.value = false },
+            onColorSelected = { hue, saturation ->
+                viewModel.onColorSelected(hue, saturation, 1f)
+                showDialog.value = false
+            }
+        )
     }
 
     Scaffold(
@@ -183,7 +196,8 @@ fun AddEditNoteScreen(
                 NoteIcon(
                     noteTitle = viewModel.noteTitle.value.text,
                     fontSize = 24.sp,
-                    backgroundColor = noteColor,
+                    backgroundColor = selectedColor,
+                    onClick = { showDialog.value = true },
                     modifier = Modifier
                         .padding(16.dp)
                         .size(64.dp)

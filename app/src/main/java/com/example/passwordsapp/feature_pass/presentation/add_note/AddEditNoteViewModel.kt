@@ -14,10 +14,12 @@ import com.example.passwordsapp.feature_pass.domain.usecase.NoteUseCases
 import com.example.passwordsapp.feature_pass.domain.util.EncryptionManager
 import com.example.passwordsapp.feature_pass.domain.util.generateRandomColor
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -41,9 +43,16 @@ class AddEditNoteViewModel @Inject constructor(
     ))
     val passContent: State<NoteTextFieldState> = _passContent
 
-    private val _noteColor = mutableStateOf(generateRandomColor())
+    val selectedColor = mutableStateOf(generateRandomColor())
 
-    val noteColor: State<Color> = _noteColor
+    fun onColorSelected(hue: Float, saturation: Float, value: Float) {
+        viewModelScope.launch {
+            val color = withContext(Dispatchers.Default) {
+                Color.hsv(hue, saturation, value)
+            }
+            selectedColor.value = color
+        }
+    }
 
     private val _eventFlow = MutableSharedFlow<UiEvent>()
     val eventFlow = _eventFlow.asSharedFlow()
@@ -71,7 +80,7 @@ class AddEditNoteViewModel @Inject constructor(
                     text = String(decryptedPassword),
                     isHintVisible = false,
                 )
-                _noteColor.value = Color(note.color)
+                selectedColor.value = Color(note.color)
             }
         }
     }
@@ -128,7 +137,7 @@ class AddEditNoteViewModel @Inject constructor(
                                 passwordIv = passwordIv,
                                 timeStamp = System.currentTimeMillis(),
                                 id = currentNoteId,
-                                color = noteColor.value.toArgb()
+                                color = selectedColor.value.toArgb()
                             )
                         )
                         _eventFlow.emit(UiEvent.SaveNote)

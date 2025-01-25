@@ -50,6 +50,10 @@ class PasswordCheckRepositoryImpl @Inject constructor(
         warnings
     }
 
+    override suspend fun getPasswordDuplicates(): List<PasswordWarning> {
+        TODO()
+    }
+
     override suspend fun checkPasswordForBreaches(): List<PasswordWarning> = withContext(Dispatchers.IO) {
         Log.d("PasswordCheckRepository", "checkPasswordForBreaches: Start")
         val notes = noteUseCases.getNotesUseCase().flowOn(Dispatchers.IO).first()

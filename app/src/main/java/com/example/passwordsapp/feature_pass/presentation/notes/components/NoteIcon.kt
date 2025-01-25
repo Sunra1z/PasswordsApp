@@ -1,6 +1,7 @@
 package com.example.passwordsapp.feature_pass.presentation.notes.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -22,6 +23,7 @@ import kotlin.random.Random
 fun NoteIcon(
     noteTitle: String,
     modifier: Modifier,
+    onClick: () -> Unit,
     backgroundColor: Color,
     fontSize: TextUnit = TextUnit.Unspecified
 ) {
@@ -29,7 +31,10 @@ fun NoteIcon(
     Box(
         modifier = modifier
             .size(36.dp)
-            .background(backgroundColor, shape = CircleShape),
+            .background(backgroundColor, shape = CircleShape)
+            .clickable {
+                onClick()
+            },
         contentAlignment = Alignment.Center
     ) {
         Text(

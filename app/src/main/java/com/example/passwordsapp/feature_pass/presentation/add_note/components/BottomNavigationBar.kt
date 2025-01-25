@@ -19,7 +19,6 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.passwordsapp.feature_pass.presentation.util.Screen
-import com.example.passwordsapp.ui.theme.savoyBlue
 
 @Composable
 fun BottomNavigationBar(navController: NavHostController) {

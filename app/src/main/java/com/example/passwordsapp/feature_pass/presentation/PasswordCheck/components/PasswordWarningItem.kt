@@ -67,7 +67,8 @@ fun PasswordWarningItem(
                         NoteIcon(
                             warning.title,
                             modifier = Modifier.align(Alignment.Center),
-                            backgroundColor = warning.color
+                            backgroundColor = warning.color,
+                            onClick = { }
                         )
                     }
                 }

@@ -44,6 +44,7 @@ import com.example.passwordsapp.feature_pass.presentation.PasswordCheck.componen
 import com.example.passwordsapp.feature_pass.presentation.PasswordCheck.components.PasswordWarningDropdown
 import com.example.passwordsapp.feature_pass.presentation.add_note.components.NoteModalBottomSheet
 import com.example.passwordsapp.feature_pass.presentation.util.isNetworkAvailable
+import com.example.passwordsapp.ui.theme.greenAlertColor
 import com.example.passwordsapp.ui.theme.redAlertColor
 import com.example.passwordsapp.ui.theme.yellowAlertColor
 
@@ -136,7 +137,7 @@ fun PasswordCheckScreen(
                                 modifier = Modifier,
                                 middleText = "Warnings",
                                 backgroundColor = MaterialTheme.colorScheme.surface,
-                                allGoodColor = MaterialTheme.colorScheme.secondary
+                                allGoodColor = greenAlertColor
                             )
                         }
 

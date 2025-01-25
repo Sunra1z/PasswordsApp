@@ -53,6 +53,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.TextStyle
@@ -95,10 +96,6 @@ fun NotesScreen(
       containerColor = MaterialTheme.colorScheme.background,
       topBar = {
          TopAppBar(
-            colors = TopAppBarDefaults.topAppBarColors(
-               containerColor = MaterialTheme.colorScheme.background,
-               titleContentColor = MaterialTheme.colorScheme.onBackground,
-            ),
             title = {
                Text(
                   "Passwords",
@@ -107,14 +104,18 @@ fun NotesScreen(
                   fontWeight = FontWeight.Bold
                )
             },
-            actions = {
-               IconButton(onClick = { menuExpanded.value = true }) {
-                  Icon(
-                     imageVector = Icons.Filled.Menu,
-                     contentDescription = "Localized description"
-                  )
-               }
-            },
+            colors = TopAppBarDefaults.topAppBarColors(
+               containerColor = MaterialTheme.colorScheme.background,
+               titleContentColor = MaterialTheme.colorScheme.onBackground,
+            ),
+//            actions = {
+//               IconButton(onClick = { menuExpanded.value = true }) {
+//                  Icon(
+//                     imageVector = Icons.Filled.Menu,
+//                     contentDescription = "Localized description"
+//                  )
+//               }
+//            },
          )
       },
       floatingActionButton = {

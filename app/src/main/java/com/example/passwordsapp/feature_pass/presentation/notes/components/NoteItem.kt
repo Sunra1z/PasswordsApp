@@ -111,7 +111,8 @@ fun NoteItem(
                                     noteTitle = note.title,
                                     modifier = Modifier
                                         .padding(start = 12.dp, top = 12.dp, end = 16.dp, bottom = 12.dp),
-                                    backgroundColor = toColor(note.color)
+                                    backgroundColor = toColor(note.color),
+                                    onClick = { }
                                 )
                                 Column(modifier = Modifier
                                     .weight(1f)) {
