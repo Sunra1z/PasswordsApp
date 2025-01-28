@@ -61,7 +61,7 @@ fun PasswordCheckScreen(
     val scope = rememberCoroutineScope()
     var selectedNoteId by rememberSaveable { mutableStateOf<Int?>(null) }
     var isSheetOpen by rememberSaveable { mutableStateOf(false) }
-    val showAlert = remember { mutableStateOf(false) }
+    val showAlert = rememberSaveable { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         if (!isNetworkAvailable(context)){

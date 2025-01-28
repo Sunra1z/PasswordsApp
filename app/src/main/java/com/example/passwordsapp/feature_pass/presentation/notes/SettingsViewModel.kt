@@ -2,6 +2,7 @@ package com.example.passwordsapp.feature_pass.presentation.notes
 
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Environment
 import android.util.Log
 import android.widget.Toast
@@ -41,33 +42,33 @@ class SettingsViewModel @Inject constructor(
     val hideUsernameEnabled: StateFlow<Boolean> = repository.hideUsernameEnabled
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), true)
 
-    fun exportDataAsCSV(context: Context){
-        viewModelScope.launch(Dispatchers.IO){
-            val downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)
-            val csvFile = File(downloadsDir, "passwords.csv")
+    fun exportDataAsCSV(context: Context, uri: Uri) {
+        viewModelScope.launch(Dispatchers.IO) {
             val notes = noteUseCases.getNotesUseCase().flowOn(Dispatchers.IO).first()
             try {
-                FileWriter(csvFile).use { writer ->
-                    writer.append("Title,Username,Password\n")
-                    notes.forEach { note ->
-                        val decryptedPassword = encryptionManager.decrypt(
-                            iv = note.password,
-                            encryptedBytes = note.passwordIv
-                        ).toString(Charsets.UTF_8)
-                        writer.append("${note.title},${note.username},$decryptedPassword\n")
+                context.contentResolver.openOutputStream(uri)?.use { outputStream ->
+                    outputStream.writer().use { writer ->
+                        writer.append("Title,Username,Password\n")
+                        notes.forEach { note ->
+                            val decryptedPassword = encryptionManager.decrypt(
+                                iv = note.password,
+                                encryptedBytes = note.passwordIv
+                            ).toString(Charsets.UTF_8)
+                            writer.append("${note.title},${note.username},$decryptedPassword\n")
+                        }
                     }
                 }
-                withContext(Dispatchers.Main){
+                withContext(Dispatchers.Main) {
                     val toast = Toast.makeText(context, "File exported successfully!", Toast.LENGTH_SHORT)
                     toast.show()
                 }
                 Log.d("ExportAsCSV", "File successfully created")
-                } catch (e: IOException){
-                    e.printStackTrace()
+            } catch (e: IOException) {
+                e.printStackTrace()
                 Log.e("ExportAsCSV", "Something went wrong")
-                }
             }
         }
+    }
 
     fun setThemeMode(mode: Boolean){
         viewModelScope.launch {

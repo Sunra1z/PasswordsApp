@@ -1,7 +1,8 @@
 package com.example.passwordsapp.feature_pass.presentation.notes
 
-import android.graphics.drawable.Icon
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
@@ -17,6 +18,9 @@ import androidx.compose.material.icons.filled.FileUpload
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material.icons.rounded.Warning
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -41,8 +45,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.passwordsapp.feature_pass.domain.model.SettingButtons
+import com.example.passwordsapp.feature_pass.presentation.add_note.components.ExportAlert
 import com.example.passwordsapp.feature_pass.presentation.notes.components.ThemeSwitcher
 import com.example.passwordsapp.ui.theme.PasswordsAppTheme
+import com.example.passwordsapp.ui.theme.redAlertColor
 
 val settingsButtons = listOf(
     SettingButtons("Export passwords as CSV", "Export all your data as CSV file", "Export", icon = Icons.Default.Save),
@@ -63,6 +69,30 @@ fun SettingsScreen(
     val notificationsEnabled by viewModel.notificationsEnabled.collectAsState()
     val darkThemeEnabled by viewModel.darkThemeEnabled.collectAsState()
     val hideUsernameEnabled by viewModel.hideUsernameEnabled.collectAsState()
+    val showAlert = remember { mutableStateOf(false) }
+
+
+    val exportLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.CreateDocument("text/csv"),
+        onResult = { uri ->
+            uri?.let {
+                viewModel.exportDataAsCSV(context, it)
+            }
+        }
+    )
+
+
+    if (showAlert.value) {
+        ExportAlert(
+            onConfirm = {
+                showAlert.value = false
+                exportLauncher.launch("passwords.csv")
+            },
+            onDismiss = {
+                showAlert.value = false
+            }
+        )
+    }
 
         Scaffold(
             topBar = {
@@ -88,7 +118,7 @@ fun SettingsScreen(
                         ListItem(
                             modifier = Modifier.clickable {
                                 when (button.category) {
-                                    "Export" -> viewModel.exportDataAsCSV(context)
+                                    "Export" -> showAlert.value = true
                                     "Import" -> {
                                         // Handle import data action
                                         val toast = Toast.makeText(context, "Not implemented yet :(", Toast.LENGTH_SHORT)

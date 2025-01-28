@@ -110,7 +110,8 @@ fun NoteItem(
                                 NoteIcon(
                                     noteTitle = note.title,
                                     modifier = Modifier
-                                        .padding(start = 12.dp, top = 12.dp, end = 16.dp, bottom = 12.dp),
+                                        .padding(start = 16.dp, top = 12.dp, end = 8.dp, bottom = 12.dp)
+                                        .size(40.dp),
                                     backgroundColor = toColor(note.color),
                                     onClick = { }
                                 )
@@ -127,7 +128,7 @@ fun NoteItem(
                                         text = if(!hideUsername){
                                             note.username
                                         } else {
-                                            "********"
+                                            "••••••••"
                                         },
                                         modifier = Modifier.padding(8.dp, 0.dp, 0.dp, 16.dp),
                                         fontSize = 12.sp,
