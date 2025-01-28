@@ -7,6 +7,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -23,6 +24,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBackIosNew
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Error
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Menu
@@ -36,6 +38,8 @@ import androidx.compose.material.icons.outlined.Title
 import androidx.compose.material.icons.rounded.CheckCircle
 import androidx.compose.material.icons.rounded.CheckCircleOutline
 import androidx.compose.material.icons.rounded.Circle
+import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
@@ -170,20 +174,6 @@ fun AddEditNoteScreen(
 
             )
         },
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = {
-                    navController.navigate(Screen.AddEditNoteScreen.route)
-                },
-                containerColor = MaterialTheme.colorScheme.primary
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = "Add note",
-                    tint = Color.White
-                )
-            }
-        },
         content = { paddingValues ->
 
             Column(
@@ -199,15 +189,33 @@ fun AddEditNoteScreen(
                 modifier = Modifier,
                 verticalAlignment = Alignment.CenterVertically
             ){
-                NoteIcon(
-                    noteTitle = viewModel.noteTitle.value.text,
-                    fontSize = 24.sp,
-                    backgroundColor = selectedColor,
-                    onClick = { showDialog.value = true },
-                    modifier = Modifier
-                        .padding(16.dp)
-                        .size(64.dp)
-                )
+                Box(modifier = Modifier
+                    .padding(16.dp)) {
+                    BadgedBox(
+                        badge = {
+                            Badge(
+                                modifier = Modifier
+                                    .size(24.dp)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Edit,
+                                    contentDescription = "EditBadge"
+                                )
+                            }
+                        }
+                    ) {
+                        NoteIcon(
+                            noteTitle = viewModel.noteTitle.value.text,
+                            modifier = Modifier
+                                .align(Alignment.Center)
+                                .size(64.dp),
+                            backgroundColor = viewModel.selectedColor.value,
+                            onClick = {
+                                showDialog.value = true
+                            }
+                        )
+                    }
+                }
                 OutlinedTextField(
                     value = viewModel.noteTitle.value.text,
                     leadingIcon = {

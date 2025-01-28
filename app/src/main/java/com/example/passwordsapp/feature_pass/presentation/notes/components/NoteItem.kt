@@ -96,7 +96,7 @@ fun NoteItem(
                 content = {
                     Card(
                         modifier = Modifier
-                            .padding(horizontal = 8.dp, vertical = 8.dp)
+                            .padding(horizontal = 8.dp)
                             .fillMaxWidth()
                             .clickable { onClick() },
                         shape = RoundedCornerShape(CornerSize(10.dp)),

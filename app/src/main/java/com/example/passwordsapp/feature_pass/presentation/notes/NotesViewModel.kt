@@ -1,16 +1,19 @@
 package com.example.passwordsapp.feature_pass.presentation.notes
 
+import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.passwordsapp.feature_pass.domain.model.Note
+import com.example.passwordsapp.feature_pass.domain.repository.PasswordCheckRepository
 import com.example.passwordsapp.feature_pass.domain.repository.PreferencesRepository
 import com.example.passwordsapp.feature_pass.domain.usecase.NoteUseCases
 import com.example.passwordsapp.feature_pass.domain.util.NoteOrder
 import com.example.passwordsapp.feature_pass.domain.util.OrderType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.count
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -25,6 +28,9 @@ class NotesViewModel @Inject constructor(
 
     private val _state = mutableStateOf(NotesState())
     val state: State<NotesState> = _state
+
+    private val _totalNotesCount = mutableStateOf(0)
+    val totalNotesCount: State<Int> = _totalNotesCount
 
     private var recentlyDeletedNote: Note? = null
 
@@ -77,6 +83,7 @@ class NotesViewModel @Inject constructor(
                         noteOrder = noteOrder,
                         isLoading = false
                     )
+                    _totalNotesCount.value = notes.size
                 }
                 .launchIn(this)
         }
@@ -92,5 +99,6 @@ class NotesViewModel @Inject constructor(
             }
         }
     }
+
 
 }

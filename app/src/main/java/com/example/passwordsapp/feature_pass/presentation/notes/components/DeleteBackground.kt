@@ -30,7 +30,7 @@ fun DeleteBackground(dismissState: SwipeToDismissBoxState) {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 8.dp, vertical = 8.dp)
+            .padding(horizontal = 8.dp, vertical = 1.dp)
             .background(backgroundColor, shape = RoundedCornerShape(10.dp)),
         contentAlignment = Alignment.CenterEnd
     ) {

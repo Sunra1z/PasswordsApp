@@ -25,7 +25,7 @@ class PasswordCheckViewModel @Inject constructor(
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading
 
-    fun loadPasswordData() {
+     fun loadPasswordData() {
         viewModelScope.launch {
             Log.d("PasswordCheckViewModel", "loadPasswordData: Start")
             _isLoading.value = true
