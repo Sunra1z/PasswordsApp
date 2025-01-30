@@ -1,5 +1,6 @@
 package com.example.passwordsapp.feature_pass.presentation.notes.components
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column

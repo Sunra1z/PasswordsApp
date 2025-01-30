@@ -18,15 +18,15 @@ class GetNotesUseCase(
             when (noteOrder.orderType) {
                 is OrderType.Ascending -> {
                     when (noteOrder) {
-                        is NoteOrder.Title -> notes.sortedBy { it.title.lowercase() }
-                        is NoteOrder.Date -> notes.sortedBy { it.timeStamp }
+                        is NoteOrder.Title -> notes.sortedWith(compareBy<Note> { !it.isFavorite }.thenBy { it.title.lowercase() })
+                        is NoteOrder.Date -> notes.sortedWith(compareBy<Note> { !it.isFavorite }.thenBy { it.timeStamp })
                     }
                 }
 
                 is OrderType.Descending -> {
                     when (noteOrder) {
-                        is NoteOrder.Title -> notes.sortedByDescending { it.title.lowercase() }
-                        is NoteOrder.Date -> notes.sortedByDescending { it.timeStamp }
+                        is NoteOrder.Title -> notes.sortedWith(compareBy<Note> { !it.isFavorite }.thenByDescending { it.title.lowercase() })
+                        is NoteOrder.Date -> notes.sortedWith(compareBy<Note> { !it.isFavorite }.thenByDescending { it.timeStamp })
                     }
 
                 }

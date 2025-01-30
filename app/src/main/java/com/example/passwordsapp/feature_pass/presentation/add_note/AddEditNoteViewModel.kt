@@ -45,6 +45,8 @@ class AddEditNoteViewModel @Inject constructor(
 
     val selectedColor = mutableStateOf(generateRandomColor())
 
+    val isFavorite = mutableStateOf(false)
+
     fun onColorSelected(hue: Float, saturation: Float, value: Float) {
         viewModelScope.launch {
             val color = withContext(Dispatchers.Default) {
@@ -52,6 +54,10 @@ class AddEditNoteViewModel @Inject constructor(
             }
             selectedColor.value = color
         }
+    }
+
+    fun toggleFavorite(){
+        isFavorite.value = !isFavorite.value
     }
 
     private val _eventFlow = MutableSharedFlow<UiEvent>()
@@ -81,6 +87,7 @@ class AddEditNoteViewModel @Inject constructor(
                     isHintVisible = false,
                 )
                 selectedColor.value = Color(note.color)
+                isFavorite.value = note.isFavorite
             }
         }
     }
@@ -137,7 +144,8 @@ class AddEditNoteViewModel @Inject constructor(
                                 passwordIv = passwordIv,
                                 timeStamp = System.currentTimeMillis(),
                                 id = currentNoteId,
-                                color = selectedColor.value.toArgb()
+                                color = selectedColor.value.toArgb(),
+                                isFavorite = isFavorite.value
                             )
                         )
                         _eventFlow.emit(UiEvent.SaveNote)

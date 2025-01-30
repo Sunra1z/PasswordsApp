@@ -15,6 +15,7 @@ data class Note(
     val timeStamp: Long,
     val passwordIv: ByteArray,
     val color: Int = generateRandomColor().toArgb(),
+    val isFavorite: Boolean = false,
     @PrimaryKey val id: Int? = null
 )
 

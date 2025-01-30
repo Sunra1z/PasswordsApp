@@ -3,6 +3,7 @@ package com.example.passwordsapp.feature_pass.presentation.add_note.components
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -18,12 +19,18 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.Error
+import androidx.compose.material.icons.filled.PushPin
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material.icons.outlined.PushPin
+import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconToggleButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SheetState
@@ -77,6 +84,7 @@ fun NoteModalBottomSheet(
     val showDialog = remember { mutableStateOf(false) }
     val clipboardManager = LocalClipboardManager.current
     val focusRequester = remember { FocusRequester() }
+    val isNoteFavorite = viewModel.isFavorite.value
 
     LaunchedEffect(noteId) {
         noteId?.let {
@@ -140,6 +148,26 @@ fun NoteModalBottomSheet(
                     modifier = Modifier
                         .padding(12.dp)
                         .size(64.dp)
+                )
+                IconToggleButton(
+                    modifier = Modifier
+                        .size(24.dp),
+                    checked = isNoteFavorite,
+                    onCheckedChange = {
+                        viewModel.toggleFavorite()
+                    },
+                    content = {
+                        Icon(
+                            imageVector = if (isNoteFavorite){
+                                Icons.Filled.PushPin
+                            } else {
+                                Icons.Outlined.PushPin
+                            },
+                            contentDescription = "StarFavorite",
+                            modifier = Modifier
+                                .size(24.dp)
+                        )
+                    }
                 )
                 TransparentHintTextField(
                     text = viewModel.noteTitle.value.text,
