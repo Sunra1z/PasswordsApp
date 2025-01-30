@@ -10,6 +10,8 @@ import androidx.lifecycle.viewModelScope
 import com.example.passwordsapp.feature_pass.domain.model.InvalidNoteException
 import com.example.passwordsapp.feature_pass.domain.model.Note
 import com.example.passwordsapp.feature_pass.domain.repository.NoteRepository
+import com.example.passwordsapp.feature_pass.domain.usecase.CheckPasswordForBreachesUseCase
+import com.example.passwordsapp.feature_pass.domain.usecase.CheckPasswordForWarningsUseCase
 import com.example.passwordsapp.feature_pass.domain.usecase.NoteUseCases
 import com.example.passwordsapp.feature_pass.domain.util.EncryptionManager
 import com.example.passwordsapp.feature_pass.domain.util.generateRandomColor
@@ -25,7 +27,9 @@ import javax.inject.Inject
 @HiltViewModel
 class AddEditNoteViewModel @Inject constructor(
     private val noteUseCases: NoteUseCases,
-    private val encryptionManager: EncryptionManager
+    private val encryptionManager: EncryptionManager,
+    private val CheckPasswordForBreachesUseCase: CheckPasswordForBreachesUseCase,
+    private val CheckPasswordForWarningsUseCase: CheckPasswordForWarningsUseCase
 ) : ViewModel() {
 
     private val _noteTitle = mutableStateOf(NoteTextFieldState(
@@ -46,6 +50,8 @@ class AddEditNoteViewModel @Inject constructor(
     val selectedColor = mutableStateOf(generateRandomColor())
 
     val isFavorite = mutableStateOf(false)
+    val isWeak = mutableStateOf(false)
+    val isLeaked = mutableStateOf(false)
 
     fun onColorSelected(hue: Float, saturation: Float, value: Float) {
         viewModelScope.launch {
@@ -88,6 +94,8 @@ class AddEditNoteViewModel @Inject constructor(
                 )
                 selectedColor.value = Color(note.color)
                 isFavorite.value = note.isFavorite
+                isWeak.value = note.isWeak
+                isLeaked.value = note.isLeaked
             }
         }
     }
@@ -136,6 +144,7 @@ class AddEditNoteViewModel @Inject constructor(
                         }
                         val username = usernameContent.value.text
                         val (encryptedPassword, passwordIv) = encryptionManager.encrypt(passContent.value.text.toByteArray())
+
                         noteUseCases.addNoteUseCase(
                             Note(
                                 title = noteTitle.value.text,
@@ -145,10 +154,35 @@ class AddEditNoteViewModel @Inject constructor(
                                 timeStamp = System.currentTimeMillis(),
                                 id = currentNoteId,
                                 color = selectedColor.value.toArgb(),
-                                isFavorite = isFavorite.value
+                                isFavorite = isFavorite.value,
+                                isWeak = false,
+                                isLeaked = false
                             )
                         )
-                        _eventFlow.emit(UiEvent.SaveNote)
+                        _eventFlow.emit(UiEvent.NavigateBack)
+
+                        // Perform password checks in the background
+                        val passwordWarnings = CheckPasswordForWarningsUseCase(passContent.value.text)
+                        val passwordBreaches = CheckPasswordForBreachesUseCase(passContent.value.text)
+
+                        isWeak.value = passwordWarnings != null
+                        isLeaked.value = passwordBreaches != null
+
+                        // Update the note with the password check results
+                        noteUseCases.addNoteUseCase(
+                            Note(
+                                title = noteTitle.value.text,
+                                username = username,
+                                password = encryptedPassword,
+                                passwordIv = passwordIv,
+                                timeStamp = System.currentTimeMillis(),
+                                id = currentNoteId,
+                                color = selectedColor.value.toArgb(),
+                                isFavorite = isFavorite.value,
+                                isWeak = isWeak.value,
+                                isLeaked = isLeaked.value
+                            )
+                        )
                     } catch (e: InvalidNoteException) {
                         _eventFlow.emit(
                             UiEvent.ShowSnackBar(
@@ -164,5 +198,6 @@ class AddEditNoteViewModel @Inject constructor(
     sealed class UiEvent {
         data class ShowSnackBar(val message: String): UiEvent()
         object SaveNote: UiEvent()
+        object NavigateBack: UiEvent()
     }
 }

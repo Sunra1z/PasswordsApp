@@ -16,6 +16,8 @@ data class Note(
     val passwordIv: ByteArray,
     val color: Int = generateRandomColor().toArgb(),
     val isFavorite: Boolean = false,
+    val isLeaked: Boolean = false,
+    val isWeak: Boolean = false,
     @PrimaryKey val id: Int? = null
 )
 

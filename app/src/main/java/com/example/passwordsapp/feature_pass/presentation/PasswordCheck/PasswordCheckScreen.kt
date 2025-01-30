@@ -118,8 +118,6 @@ fun PasswordCheckScreen(
                         )
                     }
                 } else {
-                    val filteredLeaks = passwordLeaks.filter { it.warning.isNotEmpty() }
-                    val filteredWarnings = passwordWarnings.filter { it.warning.isNotEmpty() }
                     Log.d("PasswordCheckScreen", "Loading state: false")
                     Column(
                         modifier = Modifier.fillMaxSize(),
@@ -132,8 +130,8 @@ fun PasswordCheckScreen(
                             contentAlignment = Alignment.TopCenter,
                         ) {
                             CircleMeter(
-                                warningsCount = filteredWarnings.size, // Example count
-                                leaksCount = filteredLeaks.size, // Example count
+                                warningsCount = passwordWarnings.size, // Example count
+                                leaksCount = passwordLeaks.size, // Example count
                                 modifier = Modifier,
                                 middleText = "Warnings",
                                 backgroundColor = MaterialTheme.colorScheme.surface,
@@ -141,14 +139,14 @@ fun PasswordCheckScreen(
                             )
                         }
 
-                        if (filteredLeaks.isNotEmpty()) {
+                        if (passwordLeaks.isNotEmpty()) {
                             PasswordWarningDropdown(
                                 title = "Compromised Passwords",
-                                warnings = filteredLeaks,
+                                warnings = passwordLeaks,
                                 cardColor = MaterialTheme.colorScheme.surface,
                                 alertColor = redAlertColor,
                                 icon = Icons.Rounded.WarningAmber,
-                                subtext = "${filteredLeaks.size} found",
+                                subtext = "${passwordLeaks.size} found",
                                 onOpenNote = { noteId ->
                                     selectedNoteId = noteId
                                     isSheetOpen = true
@@ -157,14 +155,14 @@ fun PasswordCheckScreen(
                             )
                         }
 
-                        if (filteredWarnings.isNotEmpty()) {
+                        if (passwordWarnings.isNotEmpty()) {
                             PasswordWarningDropdown(
                                 title = "Weak passwords",
-                                warnings = filteredWarnings,
+                                warnings = passwordWarnings,
                                 cardColor = MaterialTheme.colorScheme.surface,
                                 alertColor = yellowAlertColor,
                                 icon = Icons.Rounded.NoEncryptionGmailerrorred,
-                                subtext = "${filteredWarnings.size} found",
+                                subtext = "${passwordWarnings.size} found",
                                 onOpenNote = { noteId ->
                                     selectedNoteId = noteId
                                     isSheetOpen = true
@@ -173,7 +171,7 @@ fun PasswordCheckScreen(
                             )
                         }
 
-                        if (filteredLeaks.isEmpty() && filteredWarnings.isEmpty()) {
+                        if (passwordLeaks.isEmpty() && passwordWarnings.isEmpty()) {
                             PasswordNoWarningCard(
                                 title = "Great!",
                                 subtext = "All passwords met with conditions",

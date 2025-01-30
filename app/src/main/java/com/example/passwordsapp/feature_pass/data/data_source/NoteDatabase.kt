@@ -8,7 +8,7 @@ import com.example.passwordsapp.feature_pass.domain.model.Note
 
 @Database(
     entities = [Note::class],
-    version = 6 // Updated version
+    version = 7 // Updated version
 )
 abstract class NoteDatabase : RoomDatabase() {
 
@@ -89,6 +89,17 @@ abstract class NoteDatabase : RoomDatabase() {
 
                 database.execSQL("DROP TABLE Note")
                 database.execSQL("ALTER TABLE Note_new RENAME TO Note")
+            }
+        }
+
+        val MIGRATION_6_7 = object : Migration(6, 7) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("""
+                    ALTER TABLE Note ADD COLUMN isLeaked INTEGER NOT NULL DEFAULT 0
+                """.trimIndent())
+                database.execSQL("""
+                    ALTER TABLE Note ADD COLUMN isWeak INTEGER NOT NULL DEFAULT 0
+                """.trimIndent())
             }
         }
     }

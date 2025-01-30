@@ -1,15 +1,20 @@
 package com.example.passwordsapp.feature_pass.presentation.add_note.components
 
+import android.view.ViewTreeObserver
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -23,8 +28,13 @@ import androidx.compose.material.icons.filled.PushPin
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.PushPin
 import androidx.compose.material.icons.outlined.Star
+import androidx.compose.material.icons.rounded.Info
+import androidx.compose.material.icons.rounded.Star
+import androidx.compose.material.icons.rounded.Warning
+import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -39,6 +49,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -59,14 +70,23 @@ import com.example.passwordsapp.feature_pass.presentation.add_note.AddEditNoteVi
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.passwordsapp.R
+import com.example.passwordsapp.feature_pass.domain.util.toColor
 import com.example.passwordsapp.feature_pass.presentation.notes.components.NoteIcon
+import com.example.passwordsapp.ui.theme.redAlertColor
+import com.example.passwordsapp.ui.theme.yellowAlertColor
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 
@@ -85,6 +105,25 @@ fun NoteModalBottomSheet(
     val clipboardManager = LocalClipboardManager.current
     val focusRequester = remember { FocusRequester() }
     val isNoteFavorite = viewModel.isFavorite.value
+    val isPassWeak = viewModel.isWeak.value
+    val isPassLeaked = viewModel.isLeaked.value
+
+    val view = LocalView.current
+    var isImeVisible by remember { mutableStateOf(false) }
+
+    DisposableEffect(Unit) {
+        val listener = ViewTreeObserver.OnPreDrawListener {
+            // Check if the keyboard is visible
+            isImeVisible = ViewCompat.getRootWindowInsets(view)
+                ?.isVisible(WindowInsetsCompat.Type.ime()) == true
+            true
+        }
+        view.viewTreeObserver.addOnPreDrawListener(listener)
+        onDispose {
+            view.viewTreeObserver.removeOnPreDrawListener(listener)
+        }
+    }
+
 
     LaunchedEffect(noteId) {
         noteId?.let {
@@ -118,18 +157,31 @@ fun NoteModalBottomSheet(
                     sheetState.hide()
                     onDismissRequest()
                 }
+                is AddEditNoteViewModel.UiEvent.NavigateBack -> {
+                    sheetState.hide()
+                    onDismissRequest()
+                }
             }
         }
     }
 
     ModalBottomSheet(
+        windowInsets = WindowInsets.ime,
         onDismissRequest = {
             onDismissRequest()
             scope.launch { sheetState.hide() }
         },
         sheetState = sheetState,
+        modifier = Modifier.then(
+            if (isImeVisible){
+                Modifier.fillMaxHeight(1.0F)
+            } else {
+                Modifier.fillMaxHeight(0.73F)
+            }
+        ),
         containerColor = MaterialTheme.colorScheme.background
     ) {
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -140,15 +192,41 @@ fun NoteModalBottomSheet(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                NoteIcon(
-                    noteTitle = viewModel.noteTitle.value.text,
-                    fontSize = 24.sp,
-                    backgroundColor = viewModel.selectedColor.value,
-                    onClick = { showDialog.value = true },
-                    modifier = Modifier
-                        .padding(12.dp)
-                        .size(64.dp)
-                )
+                Box(modifier = Modifier
+                    .padding(16.dp)) {
+                    IconWithBottomEndBadge(
+                        mainIcon = {
+                            NoteIcon(
+                                noteTitle = viewModel.noteTitle.value.text,
+                                fontSize = 24.sp,
+                                modifier = Modifier
+                                    .align(Alignment.Center)
+                                    .size(64.dp),
+                                backgroundColor = viewModel.selectedColor.value,
+                                onClick = { showDialog.value = true  }
+                            )
+                        },
+                        badgeIcon = {
+                            if (isNoteFavorite) {
+                                Icon(
+                                    imageVector = Icons.Rounded.Star,
+                                    contentDescription = "CustomBadge",
+                                    tint = yellowAlertColor,
+                                    modifier = Modifier
+                                        .size(24.dp)
+                                )
+                            } else if (isPassWeak || isPassLeaked) {
+                                Icon(
+                                    imageVector = Icons.Rounded.Warning,
+                                    contentDescription = "CustomBadge",
+                                    tint = redAlertColor,
+                                    modifier = Modifier
+                                        .size(24.dp)
+                                )
+                            }
+                        }
+                    )
+                }
                 IconToggleButton(
                     modifier = Modifier
                         .size(24.dp),
@@ -177,12 +255,6 @@ fun NoteModalBottomSheet(
                     },
                     onFocusChange = {
                         viewModel.onEvent(AddEditNoteEvent.ChangeTitleFocus(it))
-                        if (it.isFocused) {
-                            scope.launch {
-                                delay(200)
-                                sheetState.expand()
-                            }
-                        }
                     },
                     isHintVisible = viewModel.noteTitle.value.isHintVisible,
                     singleLine = true,
@@ -209,13 +281,6 @@ fun NoteModalBottomSheet(
                 ),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .onFocusChanged {
-                        if (it.isFocused) {
-                            scope.launch {
-                                sheetState.expand()
-                            }
-                        }
-                    }
             )
             Spacer(modifier = Modifier.height(16.dp))
             Row(
@@ -241,13 +306,6 @@ fun NoteModalBottomSheet(
                     ),
                     modifier = Modifier
                         .weight(1f)
-                        .onFocusChanged {
-                            if (it.isFocused) {
-                                scope.launch {
-                                    sheetState.expand()
-                                }
-                            }
-                        }
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Icon(

@@ -107,6 +107,8 @@ fun AddEditNoteScreen(
                     Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
                 }
                 is AddEditNoteViewModel.UiEvent.SaveNote -> {
+                }
+                is AddEditNoteViewModel.UiEvent.NavigateBack -> {
                     navController.navigateUp()
                 }
             }

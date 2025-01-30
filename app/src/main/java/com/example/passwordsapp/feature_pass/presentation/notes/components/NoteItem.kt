@@ -25,6 +25,7 @@ import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.PushPin
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.rounded.Star
+import androidx.compose.material.icons.rounded.Warning
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Card
@@ -55,6 +56,7 @@ import androidx.core.graphics.toColor
 import com.example.passwordsapp.R
 import com.example.passwordsapp.feature_pass.domain.model.Note
 import com.example.passwordsapp.feature_pass.domain.util.toColor
+import com.example.passwordsapp.ui.theme.redAlertColor
 import com.example.passwordsapp.ui.theme.yellowAlertColor
 import kotlinx.coroutines.delay
 
@@ -111,6 +113,7 @@ fun NoteItem(
                             .clickable { onClick() },
                         shape = RoundedCornerShape(CornerSize(10.dp)),
                         elevation = CardDefaults.cardElevation(8.dp),
+                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
                         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
                     ) {
                             Row(
@@ -121,7 +124,16 @@ fun NoteItem(
                                         .padding(16.dp)) {
                                         BadgedBox(
                                             badge = {
-                                                if (note.isFavorite){
+                                                if (note.isWeak || note.isLeaked){
+                                                    Icon(
+                                                        imageVector = Icons.Rounded.Warning,
+                                                        contentDescription = "EditBadge",
+                                                        tint = redAlertColor,
+                                                        modifier = Modifier
+                                                            .size(16.dp)
+                                                    )
+                                                }
+                                                 else if (note.isFavorite){
                                                     Icon(
                                                         imageVector = Icons.Filled.Star,
                                                         contentDescription = "EditBadge",

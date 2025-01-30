@@ -13,6 +13,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.rounded.Warning
 import androidx.compose.material.icons.twotone.Error
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
@@ -56,12 +58,13 @@ fun PasswordWarningItem(
                 Box(modifier = Modifier.padding(16.dp).size(36.dp)) {
                     BadgedBox(
                         badge = {
-                            Badge(
-                                containerColor = Color.Red,
-                                contentColor = Color.White,
-                                modifier = Modifier.size(12.dp)
-                            ) {
-                            }
+                            Icon(
+                                imageVector = Icons.Rounded.Warning,
+                                contentDescription = "EditBadge",
+                                tint = redAlertColor,
+                                modifier = Modifier
+                                    .size(16.dp)
+                            )
                         }
                     ) {
                         NoteIcon(
