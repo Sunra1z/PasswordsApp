@@ -25,6 +25,8 @@ import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -34,6 +36,10 @@ import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Shield
 import androidx.compose.material.icons.rounded.Error
+import androidx.compose.material.icons.rounded.Info
+import androidx.compose.material.icons.rounded.Lock
+import androidx.compose.material.icons.rounded.Shield
+import androidx.compose.material.icons.rounded.Warning
 import androidx.compose.material.icons.sharp.Key
 import androidx.compose.material.icons.sharp.KeyboardArrowDown
 import androidx.compose.material.icons.twotone.Key
@@ -81,11 +87,13 @@ import androidx.compose.ui.unit.sp
 import androidx.core.graphics.toColor
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.example.passwordsapp.feature_pass.domain.model.RowCardButton
+import com.example.passwordsapp.feature_pass.domain.model.CarouselCardDataClass
 import com.example.passwordsapp.feature_pass.domain.repository.PreferencesRepository
 import com.example.passwordsapp.feature_pass.domain.util.NoteOrder
 import com.example.passwordsapp.feature_pass.domain.util.OrderType
 import com.example.passwordsapp.feature_pass.presentation.add_note.components.NoteModalBottomSheet
+import com.example.passwordsapp.feature_pass.presentation.add_note.components.PagerIndicator
+import com.example.passwordsapp.feature_pass.presentation.notes.components.CarouselCard
 import com.example.passwordsapp.feature_pass.presentation.notes.components.NoItemsComposable
 import com.example.passwordsapp.feature_pass.presentation.notes.components.NoteItem
 import com.example.passwordsapp.feature_pass.presentation.notes.components.OrderSection
@@ -94,6 +102,8 @@ import com.example.passwordsapp.feature_pass.presentation.notes.components.Shimm
 import com.example.passwordsapp.feature_pass.presentation.notes.components.ShimmerRowCard
 import com.example.passwordsapp.feature_pass.presentation.util.Screen
 import com.example.passwordsapp.ui.theme.grayishCard
+import com.example.passwordsapp.ui.theme.greenAlertColor
+import com.example.passwordsapp.ui.theme.redAlertColor
 import com.example.passwordsapp.ui.theme.savoyBlue
 import com.example.passwordsapp.ui.theme.yellowAlertColor
 import kotlinx.coroutines.delay
@@ -114,13 +124,18 @@ fun NotesScreen(
    var selectedNoteColor by rememberSaveable { mutableStateOf<Int?>(null) }
    var showSnackbar by rememberSaveable { mutableStateOf(false) }
    val totalNotesCount by viewModel.totalNotesCount
+   val totalLeaksCount by viewModel.totalLeaks
+   val totalWarningsCount by viewModel.totalWarnings
    var expanded by remember { mutableStateOf(false) }
    var selectedOption by remember { mutableStateOf("Latest save") }
-
    val rowCardButtons = listOf(
-      RowCardButton(title = "Total passwords", subtext = "${totalNotesCount} pass", icon = Icons.TwoTone.Key, iconColor = MaterialTheme.colorScheme.primary, action = "show_notes"),
-      RowCardButton(title = "Security Check", subtext = "Scan Now", icon = Icons.Default.Shield, iconColor = yellowAlertColor, action = "pass_check")
+      CarouselCardDataClass(title = "Alerts", subtext = "${totalLeaksCount} pass", icon = Icons.Rounded.Warning, iconBackColor = redAlertColor, onClick = { goToPassCheckScreen(navController)  } ),
+      CarouselCardDataClass(title = "Total passwords", subtext = "${totalNotesCount} pass", icon = Icons.Rounded.Lock, iconBackColor = greenAlertColor, onClick = {  } ),
+      CarouselCardDataClass(title = "Warnings", subtext = "${totalWarningsCount} pass", icon = Icons.Rounded.Info, iconBackColor = yellowAlertColor, onClick = { goToPassCheckScreen(navController) } )
    )
+   val pagerState = rememberPagerState(initialPage = 1){
+      rowCardButtons.size
+   }
 
    Scaffold(
       containerColor = MaterialTheme.colorScheme.background,
@@ -173,105 +188,93 @@ fun NotesScreen(
                      navController.navigate(Screen.AddEditNoteScreen.route)
                   }
                } else {
-                  LazyColumn(modifier = Modifier
-                     .fillMaxSize()
-                  ) {
-                     item {
-                        LazyRow(
-                           modifier = Modifier
-                              .fillMaxWidth()
-                              .align(Alignment.CenterHorizontally)
-                        ) {
-                           items(rowCardButtons) { button ->
-                              RowCard(
-                                 modifier = Modifier.clickable {
-                                    when (button.action) {
-                                       "show_notes" -> { }
-                                       "pass_check" -> {
-                                          navController.navigate(Screen.PasswordCheckScreen.route) {
-                                             popUpTo(navController.graph.startDestinationId) {
-                                                saveState = true
-                                             }
-                                             launchSingleTop = true
-                                             restoreState = true
-                                          }
-                                       }
-                                       else -> { }
-                                    }
-                                 },
-                                 text = button.title,
-                                 icon = button.icon,
-                                 subtext = button.subtext,
-                                 iconBackColor = button.iconColor
+                  AnimatedVisibility(
+                     visible = true,
+                     enter = fadeIn(),
+                     exit = fadeOut()
+                  ){
+                     LazyColumn(modifier = Modifier
+                        .fillMaxSize()
+                     ) {
+                        item {
+                           HorizontalPager(state = pagerState, contentPadding = PaddingValues(48.dp)) { page ->
+                              CarouselCard(
+                                 title = rowCardButtons[page].title,
+                                 subtext = rowCardButtons[page].subtext,
+                                 icon = rowCardButtons[page].icon,
+                                 iconBackColor = rowCardButtons[page].iconBackColor,
+                                 onClick = rowCardButtons[page].onClick,
+                                 index = page,
+                                 pagerState = pagerState
                               )
                            }
-                        }
-
-                        Row(
-                           modifier = Modifier
-                              .fillMaxWidth()
-                              .padding(start = 8.dp, end = 8.dp, bottom = 16.dp, top = 8.dp)
-                        ) {
-                           Text(
-                              text = "Saved passwords",
-                              fontSize = 18.sp,
-                              fontWeight = FontWeight.Bold,
+                           PagerIndicator(pagerState = pagerState, modifier = Modifier.align(Alignment.CenterHorizontally))
+                           Row(
                               modifier = Modifier
-                                 .weight(1f)
-                                 .align(Alignment.CenterVertically)
-                           )
-                           Box(
-                              modifier = Modifier
-                                 .align(Alignment.CenterVertically)
-                                 .clickable { expanded = true }
+                                 .fillMaxWidth()
+                                 .padding(start = 8.dp, end = 8.dp, bottom = 16.dp, top = 8.dp)
                            ) {
-                              Row(verticalAlignment = Alignment.CenterVertically) {
-                                 Text(
-                                    text = selectedOption,
-                                    fontSize = 16.sp
-                                 )
-                                 Icon(
-                                    imageVector = Icons.Sharp.KeyboardArrowDown,
-                                    contentDescription = "Filter"
-                                 )
-                              }
-                              DropdownMenu(
-                                 expanded = expanded,
-                                 onDismissRequest = { expanded = false }
+                              Text(
+                                 text = "Saved passwords",
+                                 fontSize = 18.sp,
+                                 fontWeight = FontWeight.Bold,
+                                 modifier = Modifier
+                                    .weight(1f)
+                                    .align(Alignment.CenterVertically)
+                              )
+                              Box(
+                                 modifier = Modifier
+                                    .align(Alignment.CenterVertically)
+                                    .clickable { expanded = true }
                               ) {
-                                 DropdownMenuItem(onClick = {
-                                    selectedOption = "Latest Save"
-                                    expanded = false
-                                    viewModel.onEvent(NotesEvent.Order(NoteOrder.Date(OrderType.Descending)))
-                                 },
-                                    text = { Text(text = "Latest Save") })
-                                 DropdownMenuItem(onClick = {
-                                    selectedOption = "By Title"
-                                    expanded = false
-                                    viewModel.onEvent(NotesEvent.Order(NoteOrder.Title(OrderType.Ascending)))
-                                 },
-                                    text = { Text("By Title") })
+                                 Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Text(
+                                       text = selectedOption,
+                                       fontSize = 16.sp
+                                    )
+                                    Icon(
+                                       imageVector = Icons.Sharp.KeyboardArrowDown,
+                                       contentDescription = "Filter"
+                                    )
+                                 }
+                                 DropdownMenu(
+                                    expanded = expanded,
+                                    onDismissRequest = { expanded = false }
+                                 ) {
+                                    DropdownMenuItem(onClick = {
+                                       selectedOption = "Latest Save"
+                                       expanded = false
+                                       viewModel.onEvent(NotesEvent.Order(NoteOrder.Date(OrderType.Descending)))
+                                    },
+                                       text = { Text(text = "Latest Save") })
+                                    DropdownMenuItem(onClick = {
+                                       selectedOption = "By Title"
+                                       expanded = false
+                                       viewModel.onEvent(NotesEvent.Order(NoteOrder.Title(OrderType.Ascending)))
+                                    },
+                                       text = { Text("By Title") })
+                                 }
                               }
                            }
                         }
-                     }
-                     items(state.notes, key = { it.id!! }) { note ->
-                        NoteItem(
-                           note = note,
-                           onClick = {
-                              scope.launch {
-                                 selectedNoteId = note.id
-                                 selectedNoteColor = note.color
-                                 isSheetOpen = true
-                              }
-                           },
-                           onDelete = {
-                              viewModel.onEvent(NotesEvent.DeleteNote(note))
-                              showSnackbar = true
-                           },
-                           hideUsername = state.hideUsername
-                        )
-                        Spacer(modifier = Modifier.height(16.dp))
+                        items(state.notes, key = { it.id!! }) { note ->
+                           NoteItem(
+                              note = note,
+                              onClick = {
+                                 scope.launch {
+                                    selectedNoteId = note.id
+                                    selectedNoteColor = note.color
+                                    isSheetOpen = true
+                                 }
+                              },
+                              onDelete = {
+                                 viewModel.onEvent(NotesEvent.DeleteNote(note))
+                                 showSnackbar = true
+                              },
+                              hideUsername = state.hideUsername
+                           )
+                           Spacer(modifier = Modifier.height(16.dp))
+                        }
                      }
                   }
                }
@@ -297,4 +300,14 @@ fun NotesScreen(
          }
       }
    )
+}
+
+fun goToPassCheckScreen(navController: NavController){
+   navController.navigate(Screen.PasswordCheckScreen.route) {
+      popUpTo(navController.graph.startDestinationId) {
+         saveState = true
+      }
+      launchSingleTop = true
+      restoreState = true
+   }
 }

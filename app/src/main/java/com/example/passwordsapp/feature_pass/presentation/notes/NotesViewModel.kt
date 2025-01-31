@@ -32,6 +32,12 @@ class NotesViewModel @Inject constructor(
     private val _totalNotesCount = mutableStateOf(0)
     val totalNotesCount: State<Int> = _totalNotesCount
 
+    private val _totalLeaks = mutableStateOf(0)
+    val totalLeaks: State<Int> = _totalLeaks
+
+    private val _totalWarnings = mutableStateOf(0)
+    val totalWarnings: State<Int> = _totalWarnings
+
     private var recentlyDeletedNote: Note? = null
 
     private var getNotesJob: Job? = null
@@ -84,10 +90,14 @@ class NotesViewModel @Inject constructor(
                         isLoading = false
                     )
                     _totalNotesCount.value = notes.size
+                    _totalLeaks.value = notes.count { it.isLeaked }
+                    _totalWarnings.value = notes.count { it.isWeak }
                 }
                 .launchIn(this)
         }
     }
+
+
 
     private fun observePreferences(){
         viewModelScope.launch {

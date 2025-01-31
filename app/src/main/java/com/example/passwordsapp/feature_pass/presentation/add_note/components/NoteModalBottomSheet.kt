@@ -331,6 +331,8 @@ fun NoteModalBottomSheet(
             Button(
                 onClick = {
                     scope.launch {
+                        sheetState.hide()
+                        onDismissRequest()
                         viewModel.onEvent(AddEditNoteEvent.SaveNote)
                     }
                 },

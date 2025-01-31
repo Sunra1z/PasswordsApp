@@ -107,7 +107,7 @@ fun AddEditNoteScreen(
                     Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
                 }
                 is AddEditNoteViewModel.UiEvent.SaveNote -> {
-                    navController.navigateUp()
+
                 }
             }
         }
@@ -160,6 +160,7 @@ fun AddEditNoteScreen(
                             || viewModel.usernameContent.value.text.isEmpty()) {
                             isError = true
                         } else {
+                            navController.navigateUp()
                             viewModel.onEvent(AddEditNoteEvent.SaveNote)
                         }
                     })
