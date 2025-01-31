@@ -11,11 +11,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.NoEncryptionGmailerrorred
+import androidx.compose.material.icons.rounded.Warning
 import androidx.compose.material.icons.rounded.WarningAmber
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -63,10 +65,10 @@ fun PasswordCheckScreen(
     var isSheetOpen by rememberSaveable { mutableStateOf(false) }
     val showAlert = rememberSaveable { mutableStateOf(false) }
 
-    LaunchedEffect(Unit) {
-        if (!isNetworkAvailable(context)){
-            showAlert.value = true
-        }
+        LaunchedEffect(Unit) {
+            if (!isNetworkAvailable(context)){
+                showAlert.value = true
+            }
         Log.d("PasswordCheckScreen", "LaunchedEffect: Start loading password data")
         viewModel.loadPasswordData()
         Log.d("PasswordCheckScreen", "LaunchedEffect: End loading password data")
@@ -74,11 +76,21 @@ fun PasswordCheckScreen(
 
     if (showAlert.value) {
         AlertDialog(
-            onDismissRequest = { showAlert.value = false },
+            onDismissRequest = {
+                showAlert.value = false
+                               },
+            icon = {
+                Icon(imageVector = Icons.Rounded.Warning,
+                    contentDescription = "WarningHeroIcon",
+                    tint = Color.Gray
+                )
+            },
             title = { Text("No Internet Connection") },
             text = { Text("Password Leak Detection System is unavailable") },
             confirmButton = {
-                Button(onClick = { showAlert.value = false }) {
+                Button(onClick = {
+                    showAlert.value = false
+                }) {
                     Text("OK")
                 }
             }

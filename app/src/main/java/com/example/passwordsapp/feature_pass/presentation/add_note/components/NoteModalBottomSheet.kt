@@ -157,10 +157,6 @@ fun NoteModalBottomSheet(
                     sheetState.hide()
                     onDismissRequest()
                 }
-                is AddEditNoteViewModel.UiEvent.NavigateBack -> {
-                    sheetState.hide()
-                    onDismissRequest()
-                }
             }
         }
     }

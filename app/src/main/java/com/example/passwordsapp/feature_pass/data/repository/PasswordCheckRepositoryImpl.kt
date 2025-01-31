@@ -46,7 +46,7 @@ class PasswordCheckRepositoryImpl @Inject constructor(
                         warning = analysisResult.feedback.warning,
                         noteId = note.id,
                         suggestions = analysisResult.feedback.suggestions,
-                        color = toColor(note.color) // yep that's cringe
+                        color = toColor(note.color)
                     )
                     noteUseCases.addNoteUseCase(
                         Note(
@@ -61,6 +61,7 @@ class PasswordCheckRepositoryImpl @Inject constructor(
                             isWeak = true
                         )
                     )
+                    Log.d("PasswordCheckRepository", "Note updated as Weak with ID: ${note.id}")
                     warning
                 } else {
                     noteUseCases.addNoteUseCase(
@@ -76,6 +77,7 @@ class PasswordCheckRepositoryImpl @Inject constructor(
                             isWeak = false
                         )
                     )
+                    Log.d("PasswordCheckRepository", "Note updated with ID: ${note.id}")
                     null
                 }
             } catch (e: Exception) {
@@ -125,6 +127,7 @@ class PasswordCheckRepositoryImpl @Inject constructor(
                             isLeaked = true
                         )
                     )
+                    Log.d("PasswordCheckRepository", "Note updated as LEAKED with ID: ${note.id}")
                     breach
                 } else {
                     noteUseCases.addNoteUseCase(
@@ -140,6 +143,7 @@ class PasswordCheckRepositoryImpl @Inject constructor(
                             isLeaked = false
                         )
                     )
+                    Log.d("PasswordCheckRepository", "Note updated as FALSE with ID: ${note.id}")
                     null
                 }
             } catch (e: Exception) {
