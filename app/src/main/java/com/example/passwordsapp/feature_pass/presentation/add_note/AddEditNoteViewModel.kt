@@ -11,6 +11,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.passwordsapp.feature_pass.domain.model.InvalidNoteException
 import com.example.passwordsapp.feature_pass.domain.model.Note
 import com.example.passwordsapp.feature_pass.domain.repository.NoteRepository
+import com.example.passwordsapp.feature_pass.domain.repository.PasswordCheckRepository
 import com.example.passwordsapp.feature_pass.domain.usecase.CheckPasswordForBreachesUseCase
 import com.example.passwordsapp.feature_pass.domain.usecase.CheckPasswordForWarningsUseCase
 import com.example.passwordsapp.feature_pass.domain.usecase.NoteUseCases
@@ -29,8 +30,6 @@ import javax.inject.Inject
 class AddEditNoteViewModel @Inject constructor(
     private val noteUseCases: NoteUseCases,
     private val encryptionManager: EncryptionManager,
-    private val CheckPasswordForBreachesUseCase: CheckPasswordForBreachesUseCase,
-    private val CheckPasswordForWarningsUseCase: CheckPasswordForWarningsUseCase
 ) : ViewModel() {
 
     private val _noteTitle = mutableStateOf(NoteTextFieldState(
@@ -53,6 +52,7 @@ class AddEditNoteViewModel @Inject constructor(
     val isFavorite = mutableStateOf(false)
     val isWeak = mutableStateOf(false)
     val isLeaked = mutableStateOf(false)
+    val passwordWarning = mutableStateOf("")
 
     fun onColorSelected(hue: Float, saturation: Float, value: Float) {
         viewModelScope.launch {
@@ -104,33 +104,39 @@ class AddEditNoteViewModel @Inject constructor(
     fun onEvent(event: AddEditNoteEvent) {
         when (event) {
             is AddEditNoteEvent.EnteredTitle -> {
+                Log.d("AddEditNoteViewModel", "EnteredTitle: ${event.value}")
                 _noteTitle.value = noteTitle.value.copy(
                     text = event.value
                 )
             }
             is AddEditNoteEvent.ChangeTitleFocus -> {
+                Log.d("AddEditNoteViewModel", "ChangeTitleFocus: ${event.focusState.isFocused}")
                 _noteTitle.value = noteTitle.value.copy(
                     isHintVisible = !event.focusState.isFocused &&
                             noteTitle.value.text.isBlank()
                 )
             }
             is AddEditNoteEvent.EnteredUsername -> {
+                Log.d("AddEditNoteViewModel", "EnteredUsername: ${event.value}")
                 _usernameContent.value = usernameContent.value.copy(
                     text = event.value
                 )
             }
             is AddEditNoteEvent.ChangeUsernameFocus -> {
+                Log.d("AddEditNoteViewModel", "ChangeUsernameFocus: ${event.focusState.isFocused}")
                 _usernameContent.value = usernameContent.value.copy(
                     isHintVisible = !event.focusState.isFocused &&
                             usernameContent.value.text.isBlank()
                 )
             }
             is AddEditNoteEvent.EnteredPassword -> {
+                Log.d("AddEditNoteViewModel", "EnteredPassword: ${event.value}")
                 _passContent.value = passContent.value.copy(
                     text = event.value
                 )
             }
             is AddEditNoteEvent.ChangePasswordFocus -> {
+                Log.d("AddEditNoteViewModel", "ChangePasswordFocus: ${event.focusState.isFocused}")
                 _passContent.value = passContent.value.copy(
                     isHintVisible = !event.focusState.isFocused &&
                             passContent.value.text.isBlank()
@@ -139,20 +145,17 @@ class AddEditNoteViewModel @Inject constructor(
             is AddEditNoteEvent.SaveNote -> {
                 viewModelScope.launch {
                     try {
+                        Log.d("AddEditNoteViewModel", "SaveNote event triggered")
                         if (usernameContent.value.text.isBlank() || passContent.value.text.isBlank()) {
+                            Log.d("AddEditNoteViewModel", "Validation failed: Username or password is empty")
                             _eventFlow.emit(UiEvent.ShowSnackBar("Username and password cannot be empty"))
                             return@launch
                         }
                         val username = usernameContent.value.text
+                        Log.d("AddEditNoteViewModel", "Encrypting password")
                         val (encryptedPassword, passwordIv) = encryptionManager.encrypt(passContent.value.text.toByteArray())
 
-                        // Perform password checks in the background
-                        val passwordWarnings = CheckPasswordForWarningsUseCase(passContent.value.text)
-                        val passwordBreaches = CheckPasswordForBreachesUseCase(passContent.value.text)
-
-                        isWeak.value = passwordWarnings != null
-                        isLeaked.value = passwordBreaches != null
-
+                        Log.d("AddEditNoteViewModel", "Adding note to the database")
                         // Add the note with the password check results
                         noteUseCases.addNoteUseCase(
                             Note(
@@ -171,6 +174,7 @@ class AddEditNoteViewModel @Inject constructor(
                         _eventFlow.emit(UiEvent.SaveNote)
                         Log.d("AddEditNoteViewModel", "Note checked and added with ID: ${currentNoteId}")
                     } catch (e: InvalidNoteException) {
+                        Log.e("AddEditNoteViewModel", "Error saving note: ${e.message}")
                         _eventFlow.emit(
                             UiEvent.ShowSnackBar(
                                 message = e.message ?: "Couldn't save note"

@@ -24,6 +24,7 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.PushPin
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.rounded.Error
 import androidx.compose.material.icons.rounded.Star
 import androidx.compose.material.icons.rounded.Warning
 import androidx.compose.material3.Badge
@@ -126,18 +127,9 @@ fun NoteItem(
                                             badge = {
                                                 if (note.isWeak || note.isLeaked){
                                                     Icon(
-                                                        imageVector = Icons.Rounded.Warning,
+                                                        imageVector = Icons.Rounded.Error,
                                                         contentDescription = "EditBadge",
                                                         tint = redAlertColor,
-                                                        modifier = Modifier
-                                                            .size(16.dp)
-                                                    )
-                                                }
-                                                 else if (note.isFavorite){
-                                                    Icon(
-                                                        imageVector = Icons.Filled.Star,
-                                                        contentDescription = "EditBadge",
-                                                        tint = yellowAlertColor,
                                                         modifier = Modifier
                                                             .size(16.dp)
                                                     )
@@ -176,14 +168,16 @@ fun NoteItem(
                                         style = MaterialTheme.typography.bodySmall
                                     )
                                 }
-                                Icon(
-                                    imageVector = Icons.AutoMirrored.Filled.ArrowForwardIos,
-                                    contentDescription = "OpenNote",
-                                    modifier = Modifier
-                                        .padding(end = 12.dp)
-                                        .size(24.dp),
-                                    tint = MaterialTheme.colorScheme.onBackground,
-                                )
+                                if (note.isFavorite){
+                                    Icon(
+                                        imageVector = Icons.Default.PushPin,
+                                        contentDescription = "OpenNote",
+                                        modifier = Modifier
+                                            .padding(end = 12.dp, bottom = 24.dp)
+                                            .size(16.dp),
+                                        tint = MaterialTheme.colorScheme.onBackground,
+                                    )
+                                }
                             }
                         }
                 }

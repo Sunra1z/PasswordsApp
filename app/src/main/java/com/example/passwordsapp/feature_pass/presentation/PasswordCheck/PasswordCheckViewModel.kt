@@ -30,8 +30,9 @@ class PasswordCheckViewModel @Inject constructor(
             Log.d("PasswordCheckViewModel", "loadPasswordData: Start")
             _isLoading.value = true
             try {
-                val warnings = passwordCheckRepository.getPasswordWarnings()
-                val breaches = passwordCheckRepository.checkPasswordForBreaches()
+                val alerts = passwordCheckRepository.checkPasswordsHealth()
+                val warnings: List<PasswordWarning> = alerts.filter { it.warning.isNotEmpty() }
+                val breaches: List<PasswordWarning> = alerts.filter { it.isLeaked }
                 _passwordWarnings.value = warnings
                 _passwordLeaks.value = breaches
             } catch (e: Exception) {

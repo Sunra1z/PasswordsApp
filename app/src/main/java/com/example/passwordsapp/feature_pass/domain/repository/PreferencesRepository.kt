@@ -7,7 +7,9 @@ interface PreferencesRepository {
     val darkThemeEnabled: Flow<Boolean>
     val notificationEnabled: Flow<Boolean>
     val hideUsernameEnabled: Flow<Boolean>
+    val alertTime: Flow<String>
     suspend fun setDarkTheme(mode: Boolean)
     suspend fun setNotificationsEnabled(enabled: Boolean)
     suspend fun setHideUsernameEnabled(enabled: Boolean)
+    suspend fun setAlertTime(time: String)
 }

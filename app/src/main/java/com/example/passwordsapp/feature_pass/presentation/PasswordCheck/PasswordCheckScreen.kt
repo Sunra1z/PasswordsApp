@@ -59,7 +59,7 @@ fun PasswordCheckScreen(
     val context = LocalContext.current
     val passwordLeaks by viewModel.passwordLeaks.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
-    val sheetState = rememberModalBottomSheetState()
+    val sheetState = rememberModalBottomSheetState(true)
     val scope = rememberCoroutineScope()
     var selectedNoteId by rememberSaveable { mutableStateOf<Int?>(null) }
     var isSheetOpen by rememberSaveable { mutableStateOf(false) }

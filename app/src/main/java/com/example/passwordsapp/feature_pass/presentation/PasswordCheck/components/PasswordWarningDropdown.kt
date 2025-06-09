@@ -128,7 +128,8 @@ fun PasswordWarningDropdownPreview() {
             warning = "Your password is extremely weak.",
             suggestions = listOf("Use a mix of characters.", "Avoid common words."),
             noteId = 1,
-            color = savoyBlue
+            color = savoyBlue,
+            isLeaked = false
         ),
         PasswordWarning(
             title = "High Warning",
@@ -138,7 +139,8 @@ fun PasswordWarningDropdownPreview() {
             warning = "Your password is very weak.",
             suggestions = listOf("Add special characters.", "Increase length."),
             noteId = 2,
-            color = savoyBlue
+            color = savoyBlue,
+            isLeaked = false
         ),
         PasswordWarning(
             title = "Moderate Warning",
@@ -148,7 +150,8 @@ fun PasswordWarningDropdownPreview() {
             warning = "Your password is weak.",
             suggestions = listOf("Use uppercase letters.", "Include numbers."),
             noteId = 3,
-            color = savoyBlue
+            color = savoyBlue,
+            isLeaked = false
         ),
         PasswordWarning(
             title = "Low Warning",
@@ -158,7 +161,8 @@ fun PasswordWarningDropdownPreview() {
             warning = "Your password is somewhat weak.",
             suggestions = listOf("Avoid sequential characters.", "Use unique words."),
             noteId = 4,
-            color = savoyBlue
+            color = savoyBlue,
+            isLeaked = false
         )
     )
 

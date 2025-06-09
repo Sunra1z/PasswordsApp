@@ -1,21 +1,17 @@
 package com.example.passwordsapp.feature_pass.domain.util
 
-import android.content.Context
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
-import dagger.hilt.android.qualifiers.ApplicationContext
 import java.security.KeyStore
 import javax.crypto.Cipher
 import javax.crypto.KeyGenerator
 import javax.crypto.SecretKey
-import javax.crypto.spec.IvParameterSpec
+import javax.crypto.spec.GCMParameterSpec
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class EncryptionManager @Inject constructor(
-    @ApplicationContext private val context: Context
-) {
+class EncryptionManager @Inject constructor() {
     private val keyStore = KeyStore.getInstance("AndroidKeyStore").apply {
         load(null)
     }
@@ -28,7 +24,7 @@ class EncryptionManager @Inject constructor(
 
     private fun getDecryptCipherForIv(iv: ByteArray): Cipher {
         return Cipher.getInstance(TRANSFORMATION).apply {
-            init(Cipher.DECRYPT_MODE, getKey(), IvParameterSpec(iv))
+            init(Cipher.DECRYPT_MODE, getKey(), GCMParameterSpec(GCM_TAG_LENGTH, iv))
         }
     }
 
@@ -65,8 +61,9 @@ class EncryptionManager @Inject constructor(
 
     companion object {
         private const val ALGORITHM = KeyProperties.KEY_ALGORITHM_AES
-        private const val BLOCK_MODE = KeyProperties.BLOCK_MODE_CBC
-        private const val PADDING = KeyProperties.ENCRYPTION_PADDING_PKCS7
+        private const val BLOCK_MODE = KeyProperties.BLOCK_MODE_GCM
+        private const val PADDING = KeyProperties.ENCRYPTION_PADDING_NONE
         private const val TRANSFORMATION = "$ALGORITHM/$BLOCK_MODE/$PADDING"
+        private const val GCM_TAG_LENGTH = 128
     }
 }

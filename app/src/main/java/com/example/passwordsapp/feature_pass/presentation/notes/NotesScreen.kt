@@ -118,7 +118,7 @@ fun NotesScreen(
    val state = viewModel.state.value
    val snackbarHostState = remember { SnackbarHostState() }
    val scope = rememberCoroutineScope()
-   val sheetState = rememberModalBottomSheetState()
+   val sheetState = rememberModalBottomSheetState(true)
    var isSheetOpen by rememberSaveable { mutableStateOf(false) }
    var selectedNoteId by rememberSaveable { mutableStateOf<Int?>(null) }
    var selectedNoteColor by rememberSaveable { mutableStateOf<Int?>(null) }

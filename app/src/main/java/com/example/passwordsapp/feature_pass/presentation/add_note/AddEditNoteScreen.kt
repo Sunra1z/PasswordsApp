@@ -78,6 +78,7 @@ import androidx.navigation.NavController
 import com.example.passwordsapp.feature_pass.domain.util.generateRandomColor
 import com.example.passwordsapp.feature_pass.presentation.add_note.components.ColorPickerDialog
 import com.example.passwordsapp.feature_pass.presentation.add_note.components.NoteModalBottomSheet
+import com.example.passwordsapp.feature_pass.presentation.add_note.components.PasswordStrengthIndicator
 import com.example.passwordsapp.feature_pass.presentation.add_note.components.TransparentHintTextField
 import com.example.passwordsapp.feature_pass.presentation.notes.NotesEvent
 import com.example.passwordsapp.feature_pass.presentation.notes.components.NoItemsComposable
@@ -293,58 +294,7 @@ fun AddEditNoteScreen(
                     )
                 }
 
-                Row(modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically) {
-                    Icon(
-                        imageVector = if (viewModel.passContent.value.text.length >= 8){
-                            Icons.Rounded.CheckCircle
-                        } else {
-                            Icons.Outlined.Circle
-                        },
-                        tint = if (viewModel.passContent.value.text.length >= 8){
-                            MaterialTheme.colorScheme.primary
-                        } else {
-                            Color.Gray
-                        },
-                        contentDescription = "PassHintAmount",
-                        modifier = Modifier
-                            .padding(top = 8.dp, bottom = 8.dp, start = 16.dp, end = 16.dp)
-                            .size(18.dp)
-                    )
-
-                    Text(
-                        text = "At least 8 characters",
-                        fontWeight = FontWeight.Light,
-                        fontSize = 14.sp,
-                        modifier = Modifier
-                    )
-                }
-                Row(modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically) {
-                    Icon(
-                        imageVector = if (viewModel.passContent.value.text.any { it.isLetterOrDigit().not() }){
-                            Icons.Rounded.CheckCircle
-                        } else {
-                            Icons.Outlined.Circle
-                        },
-                        tint = if (viewModel.passContent.value.text.any { it.isLetterOrDigit().not() }){
-                            MaterialTheme.colorScheme.primary
-                        } else {
-                            Color.Gray
-                        },
-                        contentDescription = "PassHintSpecial",
-                        modifier = Modifier
-                            .padding(top = 8.dp, bottom = 8.dp, start = 16.dp, end = 16.dp)
-                            .size(18.dp)
-                    )
-
-                    Text(
-                        text = "Special characters",
-                        fontWeight = FontWeight.Light,
-                        fontSize = 14.sp,
-                        modifier = Modifier
-                    )
-                }
+                PasswordStrengthIndicator(viewModel.passContent.value.text)
             }
 
 

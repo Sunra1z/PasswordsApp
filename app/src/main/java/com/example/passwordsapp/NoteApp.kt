@@ -14,8 +14,15 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
+import com.example.passwordsapp.feature_pass.domain.repository.PreferencesRepository
 import com.example.passwordsapp.feature_pass.presentation.PasswordCheck.PasswordCheckWorker
+import com.example.passwordsapp.feature_pass.presentation.PasswordCheck.PasswordHealthCheckWorker
 import dagger.hilt.android.HiltAndroidApp
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -23,6 +30,7 @@ import javax.inject.Inject
 class NoteApp : Application(), Configuration.Provider {
 
     @Inject lateinit var workerFactory: HiltWorkerFactory
+    @Inject lateinit var preferencesRepository: PreferencesRepository
 
     override fun getWorkManagerConfiguration(): Configuration {
         return Configuration.Builder()
@@ -33,12 +41,44 @@ class NoteApp : Application(), Configuration.Provider {
     override fun onCreate() {
         super.onCreate()
         Log.d("NoteApp", "Application onCreate called")
-        setupPeriodicWork() // default Worker with 1 day notification Delay
-//        setupTestWork() // debug notifications
         createNotificationChannel()
+        CoroutineScope(Dispatchers.IO).launch {
+            val alertTimeInHours = fetchAlertTime()
+            withContext(Dispatchers.Main) {
+                setupPeriodicWork(alertTimeInHours)
+                schedulePasswordHealthCheck()
+            }
+        }
     }
 
-    private fun setupPeriodicWork() {
+    private suspend fun fetchAlertTime(): Long {
+        val alertTime = preferencesRepository.alertTime.first()
+        return when (alertTime) {
+            "1h" -> 1
+            "6h" -> 6
+            "12h" -> 12
+            "24h" -> 24
+            else -> 24 // Default to 24 hours if the value is not recognized
+        }
+    }
+
+    private fun schedulePasswordHealthCheck(){
+        val constraints = Constraints.Builder()
+            .setRequiresBatteryNotLow(true)
+            .build()
+
+        val workRequest = PeriodicWorkRequestBuilder<PasswordHealthCheckWorker>(1, TimeUnit.HOURS)
+            .setConstraints(constraints)
+            .build()
+
+        WorkManager.getInstance(this).enqueueUniquePeriodicWork(
+            "PasswordHealthCheck",
+            ExistingPeriodicWorkPolicy.UPDATE,
+            workRequest
+        )
+    }
+
+    private fun setupPeriodicWork(alertTimeHours: Long) {
         Log.d("NoteApp", "Setting up periodic work")
 
         // Define constraints for periodic work
@@ -48,7 +88,7 @@ class NoteApp : Application(), Configuration.Provider {
             .build()
 
         // Create a periodic work request with a minimum interval of 1 day
-        val workRequest = PeriodicWorkRequestBuilder<PasswordCheckWorker>(1, TimeUnit.DAYS)
+        val workRequest = PeriodicWorkRequestBuilder<PasswordCheckWorker>(alertTimeHours, TimeUnit.HOURS)
             .setConstraints(constraints) // Attach constraints
             .build()
 

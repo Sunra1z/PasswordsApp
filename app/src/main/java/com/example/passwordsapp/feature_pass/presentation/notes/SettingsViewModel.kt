@@ -33,6 +33,9 @@ class SettingsViewModel @Inject constructor(
 ) : ViewModel() {
 
     // Preferences as StateFlow
+    val alertTime: StateFlow<String> = repository.alertTime
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), "24h")
+
     val darkThemeEnabled: StateFlow<Boolean> = repository.darkThemeEnabled
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
 
@@ -85,6 +88,12 @@ class SettingsViewModel @Inject constructor(
     fun setUsernameHideEnabled(enabled: Boolean){
         viewModelScope.launch {
             repository.setHideUsernameEnabled(enabled)
+        }
+    }
+
+    fun setAlertTime(time: String){
+        viewModelScope.launch {
+            repository.setAlertTime(time)
         }
     }
 

@@ -1,11 +1,11 @@
 package com.example.passwordsapp.feature_pass.domain.util
 
+import android.util.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import java.security.MessageDigest
-
 
 fun hashPassword(password: String): String {
     val messageDigest = MessageDigest.getInstance("SHA-1")

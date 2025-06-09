@@ -88,22 +88,11 @@ fun PasswordWarningItem(
                     )
                     if (warning.warning.isNotEmpty()) {
                         Text(
-                            text = "Warning: ${warning.warning}",
+                            text = warning.warning,
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.error
                         )
                     }
-//                    if (warning.suggestions.isNotEmpty()) {
-//                        Spacer(modifier = Modifier.height(2.dp)) // Reduced spacing
-//                        warning.suggestions.forEach { suggestion ->
-//                            Text(
-//                                text = "- $suggestion",
-//                                style = MaterialTheme.typography.bodyMedium,
-//                                color = MaterialTheme.colorScheme.onBackground,
-//                                modifier = Modifier.padding(start = 4.dp) // Reduced padding
-//                            )
-//                        }
-//                    }
                 }
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowForwardIos,
@@ -134,7 +123,8 @@ fun PasswordWarningItemPreview() {
             "Make your password longer."
         ),
         noteId = 1,
-        color = savoyBlue
+        color = savoyBlue,
+        isLeaked = false
     )
     PasswordWarningItem(
         warning = sampleWarning,

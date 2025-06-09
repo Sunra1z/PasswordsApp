@@ -15,11 +15,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.ime
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.ContentCopy
@@ -31,6 +33,7 @@ import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.PushPin
 import androidx.compose.material.icons.outlined.Star
+import androidx.compose.material.icons.rounded.Error
 import androidx.compose.material.icons.rounded.Info
 import androidx.compose.material.icons.rounded.Star
 import androidx.compose.material.icons.rounded.Warning
@@ -182,6 +185,7 @@ fun NoteModalBottomSheet(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(16.dp)
+                .imePadding()
         ) {
             Spacer(modifier = Modifier.height(8.dp))
             Row(
@@ -203,17 +207,9 @@ fun NoteModalBottomSheet(
                             )
                         },
                         badgeIcon = {
-                            if (isNoteFavorite) {
+                             if (isPassWeak || isPassLeaked) {
                                 Icon(
-                                    imageVector = Icons.Rounded.Star,
-                                    contentDescription = "CustomBadge",
-                                    tint = yellowAlertColor,
-                                    modifier = Modifier
-                                        .size(24.dp)
-                                )
-                            } else if (isPassWeak || isPassLeaked) {
-                                Icon(
-                                    imageVector = Icons.Rounded.Warning,
+                                    imageVector = Icons.Rounded.Error,
                                     contentDescription = "CustomBadge",
                                     tint = redAlertColor,
                                     modifier = Modifier
@@ -327,6 +323,7 @@ fun NoteModalBottomSheet(
                         .padding(8.dp)
                 )
             }
+            PasswordStrengthIndicator(password = viewModel.passContent.value.text)
             Spacer(modifier = Modifier.height(16.dp))
             Button(
                 onClick = {
@@ -340,6 +337,7 @@ fun NoteModalBottomSheet(
             ) {
                 Text("Save")
             }
+            Spacer(modifier = Modifier.height(24.dp))
         }
     }
 }

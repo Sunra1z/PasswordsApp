@@ -32,6 +32,11 @@ class PreferencesRepositoryImpl @Inject constructor(
             preferences[DataStoreManager.PreferenceKeys.SHOW_USERNAME] ?: true
         }
 
+    override val alertTime: Flow<String> = context.preferenceDataStore.data
+        .map { preferences ->
+            preferences[DataStoreManager.PreferenceKeys.ALERT_TIME] ?: "24h"
+        }
+
     // Saving theme mode preference
     override suspend fun setDarkTheme(mode: Boolean){
         context.preferenceDataStore.edit { preferences ->
@@ -49,6 +54,12 @@ class PreferencesRepositoryImpl @Inject constructor(
     override suspend fun setHideUsernameEnabled(enabled: Boolean) {
         context.preferenceDataStore.edit { preferences ->
             preferences[DataStoreManager.PreferenceKeys.SHOW_USERNAME] = enabled
+        }
+    }
+
+    override suspend fun setAlertTime(time: String) {
+        context.preferenceDataStore.edit { preferences ->
+            preferences[DataStoreManager.PreferenceKeys.ALERT_TIME] = time
         }
     }
 

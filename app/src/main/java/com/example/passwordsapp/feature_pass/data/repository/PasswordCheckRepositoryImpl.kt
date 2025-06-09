@@ -12,6 +12,8 @@ import com.example.passwordsapp.feature_pass.domain.util.toColor
 import com.example.passwordsapp.ui.theme.redAlertColor
 import com.nulabinc.zxcvbn.Zxcvbn
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.withContext
@@ -24,71 +26,6 @@ class PasswordCheckRepositoryImpl @Inject constructor(
 
     private val zxcvbn = Zxcvbn()
 
-    override suspend fun getPasswordWarnings(): List<PasswordWarning> = withContext(Dispatchers.IO) {
-        Log.d("PasswordCheckRepository", "getPasswordWarnings: Start")
-        val notes = noteUseCases.getNotesUseCase().flowOn(Dispatchers.IO).first()
-        val warnings = notes.mapNotNull { note ->
-            try {
-                val decryptedPassword = withContext(Dispatchers.Default) {
-                    encryptionManager.decrypt(note.password, note.passwordIv)
-                }
-
-                val passwordString = decryptedPassword.toString(Charsets.UTF_8)
-                val analysisResult = withContext(Dispatchers.Default) {
-                    zxcvbn.measure(passwordString)
-                }
-                if (analysisResult.feedback.warning.isNotEmpty()){
-                    val warning = PasswordWarning(
-                        title = note.title,
-                        username = note.username,
-                        password = passwordString,
-                        score = analysisResult.score,
-                        warning = analysisResult.feedback.warning,
-                        noteId = note.id,
-                        suggestions = analysisResult.feedback.suggestions,
-                        color = toColor(note.color)
-                    )
-                    noteUseCases.addNoteUseCase(
-                        Note(
-                            id = note.id,
-                            title = note.title,
-                            username = note.username,
-                            password = note.password,
-                            passwordIv = note.passwordIv,
-                            timeStamp = note.timeStamp,
-                            color = note.color,
-                            isFavorite = note.isFavorite,
-                            isWeak = true
-                        )
-                    )
-                    Log.d("PasswordCheckRepository", "Note updated as Weak with ID: ${note.id}")
-                    warning
-                } else {
-                    noteUseCases.addNoteUseCase(
-                        Note(
-                            id = note.id,
-                            title = note.title,
-                            username = note.username,
-                            password = note.password,
-                            passwordIv = note.passwordIv,
-                            timeStamp = note.timeStamp,
-                            color = note.color,
-                            isFavorite = note.isFavorite,
-                            isWeak = false
-                        )
-                    )
-                    Log.d("PasswordCheckRepository", "Note updated with ID: ${note.id}")
-                    null
-                }
-            } catch (e: Exception) {
-                Log.e("PasswordCheckRepository", "getPasswordWarnings: Error processing note ${note.id}", e)
-                null
-            }
-        }
-        Log.d("PasswordCheckRepository", "getPasswordWarnings: End")
-        warnings
-    }
-
     override suspend fun checkPasswordForBreaches(): List<PasswordWarning> = withContext(Dispatchers.IO) {
         Log.d("PasswordCheckRepository", "checkPasswordForBreaches: Start")
         val notes = noteUseCases.getNotesUseCase().flowOn(Dispatchers.IO).first()
@@ -97,7 +34,6 @@ class PasswordCheckRepositoryImpl @Inject constructor(
                 val decryptedPassword = withContext(Dispatchers.Default) {
                     encryptionManager.decrypt(note.password, note.passwordIv)
                 }
-
                 val passwordString = decryptedPassword.toString(Charsets.UTF_8)
                 val breachCount = withContext(Dispatchers.Default) {
                     checkPasswordBreach(passwordString)
@@ -109,41 +45,14 @@ class PasswordCheckRepositoryImpl @Inject constructor(
                         username = note.username,
                         password = passwordString,
                         score = 0,
+                        isLeaked = true,
                         warning = "Password has been breached $breachCount times!",
                         suggestions = listOf("Change this password immediately!"),
                         noteId = note.id,
                         color = toColor(note.color)
                     )
-                    noteUseCases.addNoteUseCase(
-                        Note(
-                            id = note.id,
-                            title = note.title,
-                            username = note.username,
-                            password = note.password,
-                            passwordIv = note.passwordIv,
-                            timeStamp = note.timeStamp,
-                            color = note.color,
-                            isFavorite = note.isFavorite,
-                            isLeaked = true
-                        )
-                    )
-                    Log.d("PasswordCheckRepository", "Note updated as LEAKED with ID: ${note.id}")
                     breach
                 } else {
-                    noteUseCases.addNoteUseCase(
-                        Note(
-                            id = note.id,
-                            title = note.title,
-                            username = note.username,
-                            password = note.password,
-                            passwordIv = note.passwordIv,
-                            timeStamp = note.timeStamp,
-                            color = note.color,
-                            isFavorite = note.isFavorite,
-                            isLeaked = false
-                        )
-                    )
-                    Log.d("PasswordCheckRepository", "Note updated as FALSE with ID: ${note.id}")
                     null
                 }
             } catch (e: Exception) {
@@ -162,6 +71,7 @@ class PasswordCheckRepositoryImpl @Inject constructor(
                 title = "",
                 username = "",
                 password = password,
+                isLeaked = false,
                 score = analysisResult.score,
                 warning = analysisResult.feedback.warning,
                 noteId = 0,
@@ -171,6 +81,55 @@ class PasswordCheckRepositoryImpl @Inject constructor(
         } else {
             null
         }
+    }
+
+    override suspend fun checkPasswordsHealth(): List<PasswordWarning> = withContext(Dispatchers.IO) {
+        val notes = noteUseCases.getNotesUseCase().flowOn(Dispatchers.IO).first()
+        val alerts = notes.map { note ->
+            async {
+                try {
+                    val decryptedPassword = encryptionManager.decrypt(note.password, note.passwordIv)
+                    val passwordString = decryptedPassword.toString(Charsets.UTF_8)
+                    val analysisResult = zxcvbn.measure(passwordString)
+                    val breachCount = checkPasswordBreach(passwordString)
+
+                    noteUseCases.addNoteUseCase(
+                        Note(
+                            id = note.id,
+                            title = note.title,
+                            username = note.username,
+                            password = note.password,
+                            passwordIv = note.passwordIv,
+                            timeStamp = note.timeStamp,
+                            color = note.color,
+                            isFavorite = note.isFavorite,
+                            isLeaked = breachCount != 0,
+                            isWeak = analysisResult.feedback.warning.isNotEmpty()
+                        )
+                    )
+                    if (analysisResult.feedback.warning.isNotEmpty() || breachCount > 0) {
+                        PasswordWarning(
+                            noteId = note.id,
+                            username = note.username,
+                            title = note.title,
+                            password = passwordString,
+                            score = analysisResult.score,
+                            warning = analysisResult.feedback.warning.ifEmpty { "${breachCount} leaks found online!" },
+                            color = toColor(note.color),
+                            isLeaked = breachCount != 0,
+                            breaches = breachCount,
+                            suggestions = analysisResult.feedback.suggestions
+                        )
+                    } else {
+                        null
+                    }
+                } catch (e: Exception) {
+                    Log.d("PasswordCheckRepo", "Failed processing note: ${note.id}\n ${e}")
+                    null
+                }
+            }
+        }.awaitAll().filterNotNull()
+        alerts
     }
 
     override suspend fun checkPasswordForBreachesForSinglePassword(password: String): PasswordWarning? {
@@ -184,6 +143,29 @@ class PasswordCheckRepositoryImpl @Inject constructor(
                 warning = "Password has been breached $breachCount times!",
                 suggestions = listOf("Change this password immediately!"),
                 noteId = 0,
+                isLeaked = true,
+                color = redAlertColor
+            )
+        } else {
+            null
+        }
+    }
+
+    override suspend fun checkPasswordHealth(password: String): PasswordWarning? {
+        val analysisResult = zxcvbn.measure(password)
+        val breachCount = checkPasswordBreach(password)
+
+        return if (analysisResult.feedback.warning.isNotEmpty() || breachCount > 0) {
+            PasswordWarning(
+                title = "",
+                username = "",
+                password = password,
+                score = analysisResult.score,
+                warning = analysisResult.feedback.warning,
+                suggestions = analysisResult.feedback.suggestions,
+                noteId = 0,
+                isLeaked = breachCount > 0,
+                breaches = breachCount,
                 color = redAlertColor
             )
         } else {
